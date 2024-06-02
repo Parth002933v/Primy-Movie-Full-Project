@@ -1,0 +1,30 @@
+# Ignore node_modules directory as it will be installed inside the container
+node_modules
+
+# Ignore logs
+logs
+*.log
+
+# Ignore test files
+test
+*.spec.js
+
+# Ignore environment variables
+.env
+
+# Ignore local development files
+.DS_Store
+*.swp
+
+# Ignore Dockerfile and .dockerignore file itself
+Dockerfile
+.dockerignore
+
+# Ignore npm and yarn related files
+npm-debug.log
+yarn-debug.log
+yarn-error.log
+
+# Ignore build output
+dist
+build
