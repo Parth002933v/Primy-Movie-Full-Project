@@ -1,7 +1,7 @@
 import { body, validationResult } from "express-validator";
-import MovieModel, { IMovie } from "../model/movie_model";
+import MovieModel from "../model/movie_model";
 import { SendResponse } from "../utils/ApiResponse";
-import { asyncErrorHandler } from "../utils/asyncErrorHandler";
+import { asyncHandler } from "../utils/asyncHandler";
 import { Request, Response, NextFunction, query } from "express";
 import CustomError from "../utils/ErrorObject";
 import CategoryModel from "../model/category_model";
@@ -12,7 +12,7 @@ import LanguageModel from "../model/languages_model";
 import VideoQualityModel from "../model/videoQuality_model";
 import ApiFeatures from "../utils/ApiFeatures";
 
-export const handleGetMovies = asyncErrorHandler(
+export const handleGetMovies = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
     const movie = new ApiFeatures(MovieModel.find(), req.query);
 
@@ -37,7 +37,7 @@ export const handleGetMovies = asyncErrorHandler(
     if (movies.length == 0) {
       throw new CustomError({
         message: "There is no movie awailable",
-        statusCode: 404,
+        errorCode: 404,
       });
     }
 
@@ -53,7 +53,7 @@ export const handleGetMovies = asyncErrorHandler(
   }
 );
 
-export const handleGetLiteMovies = asyncErrorHandler(
+export const handleGetLiteMovies = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
     // throw new CustomError({
     //   message: "There is no movie awailable",
@@ -81,7 +81,7 @@ export const handleGetLiteMovies = asyncErrorHandler(
     if (movies.length == 0) {
       throw new CustomError({
         message: "There is no movie awailable",
-        statusCode: 404,
+        errorCode: 404,
       });
     }
 
@@ -97,7 +97,7 @@ export const handleGetLiteMovies = asyncErrorHandler(
   }
 );
 
-export const handleGetMovieBySlugUrl = asyncErrorHandler(
+export const handleGetMovieBySlugUrl = asyncHandler(
   async (req: Request, res: Response) => {
     const { slugName } = req.params;
 
@@ -124,7 +124,7 @@ export const handleGetMovieBySlugUrl = asyncErrorHandler(
     if (!movie || movie.length == 0) {
       throw new CustomError({
         message: `sorry we not able to file your movie`,
-        statusCode: 404,
+        errorCode: 404,
       });
     }
 
@@ -162,7 +162,7 @@ export const validateMovieModdelware = [
   body("ageRating").notEmpty().withMessage("Age rating is required"),
   body("movieProvider").notEmpty().withMessage("Movie provider is required"),
 ];
-export const handleCerateMovie = asyncErrorHandler(
+export const handleCerateMovie = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
     const errors = validationResult(req);
 
@@ -208,44 +208,44 @@ export const handleCerateMovie = asyncErrorHandler(
     if (!categoryExists) {
       throw new CustomError({
         message: "Invalid category ID",
-        statusCode: 400,
+        errorCode: 400,
       });
     }
     if (!ageRatingExists) {
       throw new CustomError({
         message: "Invalid age rating ID",
-        statusCode: 400,
+        errorCode: 400,
       });
     }
     if (!movieProviderExists) {
       throw new CustomError({
         message: "Invalid movie provider ID",
-        statusCode: 400,
+        errorCode: 400,
       });
     }
     if (genresExist.length !== genre.length) {
       throw new CustomError({
         message: "Invalid genre ID(s)",
-        statusCode: 400,
+        errorCode: 400,
       });
     }
     if (languagesExist.length !== languages.length) {
       throw new CustomError({
         message: "Invalid language ID(s)",
-        statusCode: 400,
+        errorCode: 400,
       });
     }
 
     if (videoQualitysExist.length !== videoQualitys.length) {
       throw new CustomError({
         message: "Invalid video quality ID(s)",
-        statusCode: 400,
+        errorCode: 400,
       });
     }
     if (seasonsExist.length !== Seasons.length) {
       throw new CustomError({
         message: "Invalid season ID(s)",
-        statusCode: 400,
+        errorCode: 400,
       });
     }
 
@@ -261,7 +261,7 @@ export const handleCerateMovie = asyncErrorHandler(
     if (!newMovie) {
       throw new CustomError({
         message: "somthing went wrong",
-        statusCode: 400,
+        errorCode: 400,
       });
     }
 
@@ -274,7 +274,7 @@ export const handleCerateMovie = asyncErrorHandler(
   }
 );
 
-export const handleUpdateMovie = asyncErrorHandler(
+export const handleUpdateMovie = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
     const errors = validationResult(req);
 
@@ -322,44 +322,44 @@ export const handleUpdateMovie = asyncErrorHandler(
     if (!categoryExists) {
       throw new CustomError({
         message: "Invalid category ID",
-        statusCode: 400,
+        errorCode: 400,
       });
     }
     if (!ageRatingExists) {
       throw new CustomError({
         message: "Invalid age rating ID",
-        statusCode: 400,
+        errorCode: 400,
       });
     }
     if (!movieProviderExists) {
       throw new CustomError({
         message: "Invalid movie provider ID",
-        statusCode: 400,
+        errorCode: 400,
       });
     }
     if (genresExist.length !== genre.length) {
       throw new CustomError({
         message: "Invalid genre ID(s)",
-        statusCode: 400,
+        errorCode: 400,
       });
     }
     if (languagesExist.length !== languages.length) {
       throw new CustomError({
         message: "Invalid language ID(s)",
-        statusCode: 400,
+        errorCode: 400,
       });
     }
 
     if (videoQualitysExist.length !== videoQualitys.length) {
       throw new CustomError({
         message: "Invalid video quality ID(s)",
-        statusCode: 400,
+        errorCode: 400,
       });
     }
     if (seasonsExist.length !== Seasons.length) {
       throw new CustomError({
         message: "Invalid season ID(s)",
-        statusCode: 400,
+        errorCode: 400,
       });
     }
 
@@ -378,7 +378,7 @@ export const handleUpdateMovie = asyncErrorHandler(
     if (!newMovie) {
       throw new CustomError({
         message: "somthing went wrong",
-        statusCode: 400,
+        errorCode: 400,
       });
     }
 

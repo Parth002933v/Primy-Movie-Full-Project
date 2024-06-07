@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction, RequestHandler } from "express";
 import GenreModel from "../model/genre_model";
-import { asyncErrorHandler } from "../utils/asyncErrorHandler";
+import { asyncHandler } from "../utils/asyncHandler";
 import customError from "../utils/ErrorObject";
 import CustomError from "../utils/ErrorObject";
 import { SendResponse } from "../utils/ApiResponse";
@@ -8,12 +8,12 @@ import { SendResponse } from "../utils/ApiResponse";
 interface handleCreateGenereParama {
   genere: string;
 }
-export const handleCreateGenere = asyncErrorHandler(
+export const handleCreateGenere = asyncHandler(
   async (req: Request, res: Response) => {
     const { genere }: handleCreateGenereParama = req.body;
 
     if (!genere) {
-      throw new CustomError({ message: "genere is required", statusCode: 400 });
+      throw new CustomError({ message: "genere is required", errorCode: 400 });
     }
 
     const newGenere = await GenreModel.create({
@@ -23,7 +23,7 @@ export const handleCreateGenere = asyncErrorHandler(
     if (!newGenere) {
       throw new CustomError({
         message: "somthing went wrong",
-        statusCode: 500,
+        errorCode: 500,
       });
     }
 
@@ -36,14 +36,14 @@ export const handleCreateGenere = asyncErrorHandler(
   }
 );
 
-export const getAllGeneres = asyncErrorHandler(
+export const getAllGeneres = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
     const allGenere = await GenreModel.find();
 
     if (allGenere.length == 0)
       throw new customError({
         message: "there no genere found in database",
-        statusCode: 404,
+        errorCode: 404,
       });
 
     return SendResponse({

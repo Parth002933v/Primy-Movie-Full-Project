@@ -1,18 +1,18 @@
 import { Request, Response, NextFunction } from "express";
-import { asyncErrorHandler } from "../utils/asyncErrorHandler";
+import { asyncHandler } from "../utils/asyncHandler";
 import { SendResponse } from "../utils/ApiResponse";
 import MovieProviderModel from "../model/movieProvider";
 import CustomError from "../utils/ErrorObject";
 import MovieModel from "../model/movie_model";
 
-export const handleGetMovieProvider = asyncErrorHandler(
+export const handleGetMovieProvider = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
     const movieProviders = await MovieProviderModel.find();
 
     if (movieProviders.length == 0) {
       throw new CustomError({
         message: "There Is No Movie Provider awailable",
-        statusCode: 404,
+        errorCode: 404,
       });
     }
 
@@ -29,21 +29,21 @@ export const handleGetMovieProvider = asyncErrorHandler(
 interface handleCreateMovieProviderParams {
   providerName: string;
 }
-export const handleCreateMovieProvider = asyncErrorHandler(
+export const handleCreateMovieProvider = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
     const { providerName }: handleCreateMovieProviderParams = req.body;
 
     if (!providerName) {
       throw new CustomError({
         message: "providerName is not provided",
-        statusCode: 400,
+        errorCode: 400,
       });
     }
 
     if (!req.file) {
       throw new CustomError({
         message: "no image uploaded",
-        statusCode: 400,
+        errorCode: 400,
       });
     }
 
@@ -59,7 +59,7 @@ export const handleCreateMovieProvider = asyncErrorHandler(
     if (!newMovieProvider) {
       throw new CustomError({
         message: "Inernal Server Error",
-        statusCode: 500,
+        errorCode: 500,
       });
     }
 

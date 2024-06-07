@@ -1,18 +1,35 @@
+export enum errorCodeEnum {
+  GRAPHQL_PARSE_FAILED = "GRAPHQL_PARSE_FAILED",
+  GRAPHQL_VALIDATION_FAILED = "GRAPHQL_VALIDATION_FAILED",
+  BAD_USER_INPUT = "BAD_USER_INPUT",
+  PERSISTED_QUERY_NOT_FOUND = "PERSISTED_QUERY_NOT_FOUND",
+  PERSISTED_QUERY_NOT_SUPPORTED = "PERSISTED_QUERY_NOT_SUPPORTED",
+  OPERATION_RESOLUTION_FAILURE = "OPERATION_RESOLUTION_FAILURE",
+  BAD_REQUEST = "BAD_REQUEST",
+  INTERNAL_SERVER_ERROR = "INTERNAL_SERVER_ERROR",
+  UNAUTHENTICATED = "UNAUTHENTICATED",
+  FORBIDDEN = "FORBIDDEN",
+  DUPLICATE_KEY = "DUPLICATE_KEY",
+  VALIDATION_ERROR = "VALIDATION_ERROR",
+  NOT_FOUND = 'NOT_FOUND',
+}
+
 interface CustomErrorParams {
   message: string;
-  statusCode: number;
+  errorCode: errorCodeEnum ;
 }
 
 export default class CustomError extends Error {
-  statusCode: number;
-  status: string;
-  isOperational: boolean;
+  errorCode: errorCodeEnum ;
+  isOperational?: boolean;
 
-  constructor({ message, statusCode }: CustomErrorParams) {
+  constructor({
+    message,
+    errorCode = errorCodeEnum.INTERNAL_SERVER_ERROR,
+  }: CustomErrorParams) {
     super(message);
 
-    this.statusCode = statusCode;
-    this.status = statusCode >= 400 && statusCode < 500 ? "fail" : "error";
+    this.errorCode = errorCode;
     this.isOperational = true;
 
     Error.captureStackTrace(this, this.constructor);

@@ -1,18 +1,18 @@
 import LanguageModel from "../model/languages_model";
-import { asyncErrorHandler } from "../utils/asyncErrorHandler";
+import { asyncHandler } from "../utils/asyncHandler";
 import { NextFunction, Request, Response } from "express";
 import CustomError from "../utils/ErrorObject";
 import { SendResponse } from "../utils/ApiResponse";
 import VideoQualityModel from "../model/videoQuality_model";
 
-export const handleGetAllVideoQuality = asyncErrorHandler(
+export const handleGetAllVideoQuality = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
     const videoQualitys = await VideoQualityModel.find();
 
     if (videoQualitys.length == 0) {
       throw new CustomError({
         message: "There is No data Found",
-        statusCode: 404,
+        errorCode: 404,
       });
     }
 
@@ -30,14 +30,14 @@ interface hanldeCreateVideoQualityParams {
   quality: string;
   nickname: string;
 }
-export const hanldeCreateVideoQuality = asyncErrorHandler(
+export const hanldeCreateVideoQuality = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
     const { quality, nickname }: hanldeCreateVideoQualityParams = req.body;
 
     if (!quality || !nickname) {
       throw new CustomError({
         message: "You must have to provide quality and nickname both",
-        statusCode: 400,
+        errorCode: 400,
       });
     }
 
@@ -49,7 +49,7 @@ export const hanldeCreateVideoQuality = asyncErrorHandler(
     if (!createdAgeRating) {
       throw new CustomError({
         message: "Somthing went wrong!",
-        statusCode: 500,
+        errorCode: 500,
       });
     }
 

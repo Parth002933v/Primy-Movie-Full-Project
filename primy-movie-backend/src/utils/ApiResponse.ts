@@ -1,24 +1,6 @@
-// Define an interface for the ApiResponse parameters
-interface ApiResponseParams {
-  statusCode: number;
-  message: string;
-  data?: any;
-}
-
-// Define the ApiResponse class
-class ApiResponse {
-  statusCode: number;
-  message: string;
-  data?: any;
-
-  constructor({ statusCode, message, data }: ApiResponseParams) {
-    this.statusCode = statusCode;
-    this.message = message;
-    this.data = data;
-  }
-}
-
-import { Request, Response, NextFunction } from "express";
+import { Response } from "express";
+import { GraphQLError } from "graphql";
+import { errorCodeEnum } from "./ErrorObject";
 
 interface SendResponseParams {
   res: Response;
@@ -44,5 +26,19 @@ export const SendResponse = ({
     data: data,
   });
 };
+
+export class GraphQLErrorRespose extends GraphQLError {
+  constructor({
+    message,
+    errorCode,
+    stacktrace,
+  }: {
+    message: string;
+    errorCode: errorCodeEnum;
+    stacktrace?: any;
+  }) {
+    super(message, { extensions: { code: errorCode, stacktrace: stacktrace } });
+  }
+}
 
 // export { ApiResponse };

@@ -1,3 +1,5 @@
+import bcrypt from "bcrypt";
+
 type KeyValue = {
   [key: string]: string;
 };
@@ -31,4 +33,11 @@ export function getFirstKeyValuePairUtils(
   } else {
     return null;
   }
+}
+
+export async function generateHash(password: string) {
+  console.log("hashedPassword-main....");
+
+  const hashedPassword = await bcrypt.hash(password, 10);
+  return hashedPassword;
 }

@@ -3,7 +3,7 @@ import { Request, NextFunction, Response } from "express";
 import jwt from "jsonwebtoken";
 import { AdminModel, IAdmin } from "../model/admin_model";
 import CustomError from "../utils/ErrorObject";
-import { asyncErrorHandler } from "../utils/asyncErrorHandler";
+import { asyncHandler } from "../utils/asyncHandler";
 
 // Define the interface for authenticated requests
 interface AuthenticatedRequest extends Request {
@@ -11,7 +11,7 @@ interface AuthenticatedRequest extends Request {
 }
 
 // Middleware function for authentication
-const verifyJWT = asyncErrorHandler(
+const verifyJWT = asyncHandler(
   async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
     const token: string =
       req.cookies.accessToken ||
@@ -20,7 +20,7 @@ const verifyJWT = asyncErrorHandler(
 
     if (token === undefined) {
       throw new CustomError({
-        statusCode: 401,
+        errorCode: 401,
         message: "Unauthorized request",
       });
     }
@@ -36,7 +36,7 @@ const verifyJWT = asyncErrorHandler(
 
     if (!user) {
       throw new CustomError({
-        statusCode: 401,
+        errorCode: 401,
         message: "Invalid Access Token",
       });
     }
