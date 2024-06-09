@@ -8,6 +8,7 @@ import { languageResolver } from "./language/language.resolver";
 import { providerTypedef } from "./provider/provider.typedef";
 import { providerResolver } from "./provider/provider.resolver";
 import { qualityResolver } from "./quality/quality.resolver";
+import { movieResolver } from "./movie/movie.resolver";
 
 const mergedResolvers = mergeResolvers([
   ageRatingResolver,
@@ -16,7 +17,8 @@ const mergedResolvers = mergeResolvers([
   genereResolver,
   languageResolver,
   providerResolver,
-  qualityResolver
+  qualityResolver,
+  movieResolver
 ]);
 
 export default mergedResolvers;

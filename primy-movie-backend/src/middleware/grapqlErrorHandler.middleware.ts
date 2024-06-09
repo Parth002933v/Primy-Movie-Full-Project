@@ -47,6 +47,8 @@ const typeCastErrorHandler = (err: CustomError & MongoDBError) => {
 };
 
 export const globaleGraphqlErrorHandler = (error: CustomError) => {
+
+
   if (process.env.NODE_ENV == "development") {
     devError({ error: error });
   } else if (process.env.NODE_ENV == "production") {

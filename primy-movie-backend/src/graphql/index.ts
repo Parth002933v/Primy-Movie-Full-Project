@@ -19,11 +19,7 @@ export async function CreateApolloGraphQLServer() {
     typeDefs: mergeDTypeDefs,
     resolvers: mergedResolvers,
     introspection: true,
-    formatError: (formattedError: GraphQLFormattedError, error: any) => {
-   
-
-      return formattedError;
-    },
+    
     plugins: [ApolloServerPluginLandingPageLocalDefault({ footer: false })],
   });
 

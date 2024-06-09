@@ -12,15 +12,16 @@ export enum errorCodeEnum {
   DUPLICATE_KEY = "DUPLICATE_KEY",
   VALIDATION_ERROR = "VALIDATION_ERROR",
   NOT_FOUND = 'NOT_FOUND',
+  INVALID_CREDENTIAL = "INVALID_CREDENTIAL"
 }
 
 interface CustomErrorParams {
   message: string;
-  errorCode: errorCodeEnum ;
+  errorCode: errorCodeEnum;
 }
 
 export default class CustomError extends Error {
-  errorCode: errorCodeEnum ;
+  errorCode: errorCodeEnum;
   isOperational?: boolean;
 
   constructor({

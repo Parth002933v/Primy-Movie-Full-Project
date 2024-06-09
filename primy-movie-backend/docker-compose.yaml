@@ -10,4 +10,4 @@ services:
     env_file:
       - .env
     volumes:
-      - ./src:/app/src/
+      - E:/React JS/Primy-Movie-Full-Project/primy-movie-backend/src:/app/src/
