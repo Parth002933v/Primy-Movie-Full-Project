@@ -1,6 +1,6 @@
+
 export const movieTypeDef = `#graphql
-  
-  
+    
   type DownloadLink {
     text: String!
     link: String!
@@ -77,5 +77,39 @@ export const movieTypeDef = `#graphql
   type Query {
     movies(page: PaginationInput): PaginatedMovies
     movieById(slugUrl: ID!): Movie
+  }
+
+  input MovieInput {
+    name: String!
+    content: String!
+    posterImage: String!
+    bannerImage: String!
+    screenShorts: [String!]
+    downloadLink: [DownloadLinkInput!]!
+    releaseYear: Int!
+    genre: [ID!]
+    languages: [ID!]
+    isDualAudio: Boolean!
+    videoQualitys: [ID!]
+    isSeries: Boolean!
+    category: ID!
+    ageRating: ID!
+    movieProvider: ID!
+    tags: [String!]
+  }
+
+  input DownloadLinkInput {
+    text: String!
+    link: String!
+  }
+
+
+  type ceatedMovieOutput{
+    movieName: String!
+    slugUrl: String! 
+    message: String!
+  }
+  type Mutation{
+    addMovie(movie: MovieInput) : ceatedMovieOutput 
   }
 `;

@@ -1,4 +1,3 @@
-import { graphql, GraphQLError } from "graphql";
 
 import CustomError, {
   errorCodeEnum,
@@ -8,6 +7,7 @@ import CustomError, {
 import { GraphQLErrorRespose } from "../utils/ApiResponse";
 
 const devError = ({ error }: { error: CustomError }) => {
+
   throw new GraphQLErrorRespose({
     message: error.message,
     errorCode: error.errorCode,
@@ -48,8 +48,9 @@ const typeCastErrorHandler = (err: CustomError & MongoDBError) => {
 
 export const globaleGraphqlErrorHandler = (error: CustomError) => {
 
-
-  if (process.env.NODE_ENV == "development") {
+  if (process.env.NODE_ENV == undefined || process.env.NODE_ENV == "development") {
+    console.log(process.env.NODE_ENV);
+    
     devError({ error: error });
   } else if (process.env.NODE_ENV == "production") {
     if (isMongoDBError(error) && error.code === 11000) {

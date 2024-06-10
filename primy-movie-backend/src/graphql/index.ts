@@ -6,9 +6,7 @@ import mergedResolvers from "./meregeResolvers";
 
 import {
   ApolloServerPluginLandingPageLocalDefault,
-  ApolloServerPluginLandingPageProductionDefault,
 } from "@apollo/server/plugin/landingPage/default";
-import { GraphQLError, GraphQLFormattedError } from "graphql";
 
 export async function CreateApolloGraphQLServer() {
   interface MyContext {
@@ -19,7 +17,7 @@ export async function CreateApolloGraphQLServer() {
     typeDefs: mergeDTypeDefs,
     resolvers: mergedResolvers,
     introspection: true,
-    
+
     plugins: [ApolloServerPluginLandingPageLocalDefault({ footer: false })],
   });
 

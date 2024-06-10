@@ -8,15 +8,23 @@ import GenreModel from "../../model/genre_model";
 import LanguageModel from "../../model/languages_model";
 import MovieProviderModel from "../../model/movieProvider";
 import VideoQualityModel from "../../model/videoQuality_model";
+import { PassportContext } from "graphql-passport";
+import { convertToSlugUrl } from "../../utils/utils";
 
 export const movieResolver = {
   Query: {
-    movies: asyncResolverHandler(async (_:any,{page}: {page:{ pageNo: number}}) => {
+    movies: asyncResolverHandler(async (_: any, { page }: { page: { pageNo: number } }, context: PassportContext<any, any>) => {
 
-      
-      const Movie = new ApiGraphqlFeatures({query:MovieModel.find()})      
-      
-      const filteredQuery = Movie.sort({}).paginate({pageNumber:page.pageNo}).limitFields({})
+      // console.log(context.isUnauthenticated());
+
+      // if (context.isUnauthenticated()) {
+      //   throw new CustomError({ errorCode: errorCodeEnum.UNAUTHENTICATED, message: "you are not autherized to perform this action" })
+
+      // }
+
+      const Movie = new ApiGraphqlFeatures({ query: MovieModel.find() })
+
+      const filteredQuery = Movie.sort({}).paginate({ pageNumber: page.pageNo }).limitFields({})
 
       const populatedMovie = filteredQuery
 
@@ -39,11 +47,11 @@ export const movieResolver = {
         movies: movies,
       };
     }
-  ),
+    ),
 
-    movieById: asyncResolverHandler(async (_:any, { slugUrl }:{ slugUrl : string }) => {
+    movieById: asyncResolverHandler(async (_: any, { slugUrl }: { slugUrl: string }) => {
 
-      const MovieObj = new ApiGraphqlFeatures({query:MovieModel.findOne({ slugUrl:slugUrl})})
+      const MovieObj = new ApiGraphqlFeatures({ query: MovieModel.findOne({ slugUrl: slugUrl }) })
 
       const movie = await MovieObj.query
 
@@ -54,34 +62,147 @@ export const movieResolver = {
         });
       }
 
-      
-  
-      return  movie;
+
+
+      return movie;
 
     }
-  ),
+    ),
   },
   Movie: {
-    genre: async (parent : any) => {      
+    genre: async (parent: any) => {
       return await GenreModel.find({ _id: { $in: parent.genre } });
     },
-    languages: async (parent : any) => {
+    languages: async (parent: any) => {
       return await LanguageModel.find({ _id: { $in: parent.languages } });
     },
-    videoQualitys: async (parent : any) => {
+    videoQualitys: async (parent: any) => {
       return await VideoQualityModel.find({ _id: { $in: parent.videoQualitys } });
     },
-    category: async (parent : any) => {
+    category: async (parent: any) => {
       return await CategoryModel.findById(parent.category);
     },
-    ageRating: async (parent : any) => {
+    ageRating: async (parent: any) => {
       return await AgeRatingModel.findById(parent.ageRating);
     },
-    movieProvider: async (parent : any) => {
+    movieProvider: async (parent: any) => {
       return await MovieProviderModel.findById(parent.movieProvider);
     },
-    Seasons: async (parent : any) => {  
+    Seasons: async (parent: any) => {
       return await MovieModel.find({ _id: { $in: parent.Seasons } });
     },
   },
+
+
+
+
+  Mutation: {
+    addMovie: asyncResolverHandler(async (_: any, { movie }: { movie: movieInterface }, content: PassportContext<any, any>) => {
+
+
+      if (content.isUnauthenticated()) {
+
+        throw new CustomError({ errorCode: errorCodeEnum.UNAUTHENTICATED, message: "Your'e not authorised to perform this operation" })
+      }
+
+      // Validate that referenced documents exist
+      const [
+        categoryExists,
+        ageRatingExists,
+        movieProviderExists,
+        genresExist,
+        languagesExist,
+        videoQualitysExist,
+      ] = await Promise.all([
+        CategoryModel.exists({ _id: movie.category }),
+        AgeRatingModel.exists({ _id: movie.ageRating }),
+        MovieProviderModel.exists({ _id: movie.movieProvider }),
+        GenreModel.find({ _id: { $in: movie.genre } }).select("_id"),
+        LanguageModel.find({ _id: { $in: movie.languages } }).select("_id"),
+        VideoQualityModel.find({ _id: { $in: movie.videoQualitys } }).select("_id"),
+      ]);
+
+
+      if (!categoryExists) {
+        throw new CustomError({
+          message: "Invalid category ID",
+          errorCode: errorCodeEnum.BAD_USER_INPUT,
+        });
+      }
+      if (!ageRatingExists) {
+        throw new CustomError({
+          message: "Invalid age rating ID",
+          errorCode: errorCodeEnum.BAD_USER_INPUT,
+        });
+      }
+      if (!movieProviderExists) {
+        throw new CustomError({
+          message: "Invalid movie provider ID",
+          errorCode: errorCodeEnum.BAD_USER_INPUT,
+        });
+      }
+      if (genresExist.length !== movie.genre.length) {
+        throw new CustomError({
+          message: "Invalid genre ID(s)",
+          errorCode: errorCodeEnum.BAD_USER_INPUT,
+        });
+      }
+      if (languagesExist.length !== movie.languages.length) {
+        throw new CustomError({
+          message: "Invalid language ID(s)",
+          errorCode: errorCodeEnum.BAD_USER_INPUT,
+        });
+      }
+      if (videoQualitysExist.length !== movie.videoQualitys.length) {
+        throw new CustomError({
+          message: "Invalid video quality ID(s)",
+          errorCode: errorCodeEnum.BAD_USER_INPUT,
+        });
+      }
+
+      const slugUrlValue = convertToSlugUrl({ str: movie.name })
+
+
+      const newMovie = await MovieModel.create({ ...movie, slugUrl: slugUrlValue });
+
+      if (!newMovie) {
+        throw new CustomError({
+          message: "somthing went wrong",
+          errorCode: errorCodeEnum.BAD_REQUEST,
+        });
+      }
+      return {
+        movieName: newMovie.name,
+        slugUrl: newMovie.slugUrl,
+        message: "Movie Added Successfully!"
+      }
+    })
+  }
 };
+
+
+
+
+interface movieInterface {
+  name: string,
+  content: string,
+  posterImage: string,
+  bannerImage: string,
+  screenShorts: string[],
+  downloadLink: [
+    {
+      text: string,
+      link: string
+    }
+  ],
+  releaseYear: number,
+  genre: string[],
+  languages: string[],
+  isDualAudio: boolean,
+  videoQualitys: string[],
+  isSeries: boolean,
+  category: string,
+  ageRating: string,
+  movieProvider: string,
+  tags: string[]
+}

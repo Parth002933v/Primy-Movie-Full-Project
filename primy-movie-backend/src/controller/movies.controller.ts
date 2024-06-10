@@ -185,7 +185,7 @@ export const handleCerateMovie = asyncHandler(
       videoQualitys,
       Seasons,
     } = req.body;
-
+    
     // Validate that referenced documents exist
     const [
       categoryExists,

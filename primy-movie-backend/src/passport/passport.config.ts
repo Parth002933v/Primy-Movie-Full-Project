@@ -11,7 +11,7 @@ import { GraphQLErrorRespose } from "../utils/ApiResponse";
 export function passportConfiguration() {
 
     passport.use(new GraphQLLocalStrategy(async (_, password, done) => {
-
+        console.log("GraphQLLocalStrategy...", password);
 
         try {
             if (!password) {
@@ -31,7 +31,6 @@ export function passportConfiguration() {
 
             return done(null, admin)
         } catch (err: CustomError | any) {
-            // const e = new CustomError({ errorCode: errorCodeEnum.INTERNAL_SERVER_ERROR, message:})
             return done(err, null)
         }
     }
@@ -40,11 +39,14 @@ export function passportConfiguration() {
 
 
     passport.serializeUser((user: any, done) => {
+        console.log("serializeUser...", user);
 
 
         done(null, user._id)
     })
     passport.deserializeUser(async (id, done) => {
+
+        console.log("deserializeUser....", id);
 
         try {
 

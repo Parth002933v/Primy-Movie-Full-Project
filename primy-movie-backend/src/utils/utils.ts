@@ -4,40 +4,34 @@ type KeyValue = {
   [key: string]: string;
 };
 
-export function getFirstKeyValueUtils(obj: KeyValue): string {
-  const keys = Object.keys(obj);
-  if (keys.length > 0) {
-    return obj[keys[0]];
-  } else {
-    return "The object is empty";
-  }
-}
-
-export function getFirstKeyValuePairUtils2(obj: KeyValue): string {
-  const keys = Object.values(obj);
-  if (keys.length > 0) {
-    return obj[keys[0]];
-  } else {
-    return "The object is empty";
-  }
-}
-
-export function getFirstKeyValuePairUtils(
-  obj: KeyValue
-): { key: string; value: string } | null {
-  const keys = Object.keys(obj);
-  if (keys.length > 0) {
-    const key = keys[0];
-    const value = obj[key];
-    return { key, value };
-  } else {
-    return null;
-  }
-}
 
 export async function generateHash(password: string) {
   console.log("hashedPassword-main....");
 
   const hashedPassword = await bcrypt.hash(password, 10);
   return hashedPassword;
+}
+
+
+
+
+export function convertToSlugUrl({ str }: { str: string }): string {
+  // Remove special characters and keep alphanumeric, spaces, and hyphens
+  let slug = str.replace(/[^\w\s-]/g, '');
+
+  // Replace sequences of spaces with a single hyphen
+  slug = slug.replace(/\s+/g, '-');
+
+  // Replace sequences of multiple hyphens with a single hyphen
+  slug = slug.replace(/-+/g, '-');
+
+  // Remove leading and trailing hyphens
+  slug = slug.replace(/^-+|-+$/g, '');
+
+  // Ensure the output is not empty
+  if (slug === '') {
+    slug = 'default-slug'; // Default value in case the input string was entirely invalid
+  }
+
+  return slug;
 }

@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "dev": "NODE_ENV=development nodemon src/index.ts",
+    "dev2": "nodemon src/index.ts",
     "prod": "NODE_ENV=production nodemon src/index.ts",
     "build": "npx tsc",
     "start": "node build/index.js",
@@ -30,7 +31,6 @@
     "mongoose": "^8.3.4",
     "passport": "^0.7.0",
     "passport-local": "^1.0.0",
-    "path": "^0.12.7",
     "ts-node": "^10.9.2"
   },
   "devDependencies": {
@@ -44,7 +44,6 @@
     "@types/passport-local": "^1.0.38",
     "autoprefixer": "^10.4.19",
     "nodemon": "^3.1.3",
-    "postcss": "^8.4.38",
     "tailwindcss": "^3.4.3"
   }
 }

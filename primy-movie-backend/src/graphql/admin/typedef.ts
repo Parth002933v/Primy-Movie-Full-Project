@@ -14,7 +14,6 @@ input adminSignUpInput{
 }
 
 
-
 type User {
     _id: ID!
     email: String!
