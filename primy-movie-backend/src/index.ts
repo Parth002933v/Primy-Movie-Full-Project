@@ -51,8 +51,6 @@ app.use(session({
   store: store,
 }));
 
-app.use(passport.initialize())
-app.use(passport.session())
 
 // Start the server
 const PORT = process.env.PORT || 4000;
@@ -74,6 +72,9 @@ connectDB();
 
 //middlewares
 app.use(express.json());
+app.use(passport.initialize())
+app.use(passport.session())
+app.use(express.static("public"));
 
 // Define a route handler for the root path
 app.get("/", (req: Request, res: Response) => {

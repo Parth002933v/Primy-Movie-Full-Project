@@ -1,30 +1,45 @@
 import React from "react";
-import { MovieResponse } from "@/types/movie-types";
-import { MoveiFetcher } from "@/utils/fetcher";
+import { IMoviesResponse_gql, MovieResponse } from "@/types/movie-types";
+import { globalFetcher2, MoveiFetcher } from "@/utils/fetcher";
 import MovieCard from "../movie-card";
+import { filterData } from "@/types/other-types";
+import { ApolloQueryResult, gql } from "@apollo/client";
+import Toast from "../ui/toast";
 
-async function getMovies(page?: string): Promise<MovieResponse> {
-  const path = `${process.env.BASE_URL}/movies/${
-    page != null ? `page/${page}` : ""
-  }`;
-  const res = await MoveiFetcher(path);
 
-  return res;
+
+async function getMovieData({ page }: { page?: string }): Promise<ApolloQueryResult<IMoviesResponse_gql>> {
+
+  const GET_Movies = gql`
+   query Movies($page: PaginationInput) {
+      movies(page: $page) {
+        length
+        TotalPages
+        movies {
+          slugUrl
+          _id
+          name
+          posterImage
+    }
+  }
+}`
+
+  const pageNoToInt = Number(page)
+
+  const res = await globalFetcher2<IMoviesResponse_gql>({ url: GET_Movies, variables: { page: { pageNo: pageNoToInt } } });
+
+  return res
+
 }
 
 export default async function Movies({ page }: { page?: string }) {
-  let res: MovieResponse | null = null;
 
-  try {
-    res = await getMovies(page);
-  } catch (err: any) {
-    throw Error(err.message);
-  }
+  const movies = await getMovieData({ page: page })
 
   return (
     <div className=" flex flex-wrap flex-shrink lg:justify-center max-lg:justify-center   max-lg:px-2  gap-3  ">
-      {res != null ? (
-        res.data.map((m) => (
+      {
+        movies.data.movies?.movies.map((m) =>
           <MovieCard
             movieLink={m.slugUrl}
             movieName={m.name}
@@ -32,10 +47,12 @@ export default async function Movies({ page }: { page?: string }) {
             key={m._id}
             className="max-md:h-64 max-md:w-36  h-72 w-44"
           />
-        ))
-      ) : (
-        <></>
-      )}
+        )
+      }
+
+      {
+        movies.errors ? <Toast error={movies.errors} /> : <></>
+      }
     </div>
   );
 }

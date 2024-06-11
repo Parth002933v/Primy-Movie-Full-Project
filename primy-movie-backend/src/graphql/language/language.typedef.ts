@@ -1,7 +1,7 @@
 const languageTypeDef = `#graphql
 type language{
     _id: String
-    name:String
+    languageName: String
 }
 
 type Query {

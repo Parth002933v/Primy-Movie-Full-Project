@@ -1,5 +1,4 @@
 import Link from "next/link";
-import captionImage from "../../../public/image/caption.jpg";
 import { cn } from "@/lib/utils";
 import Image from "next/image";
 

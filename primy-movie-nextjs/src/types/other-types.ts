@@ -46,7 +46,7 @@ export interface MovieProvider_gql {
 
 export interface Language_gql {
   _id: string;
-  name: string;
+  languageName: string;
 }
 
 export interface Genere_gql {

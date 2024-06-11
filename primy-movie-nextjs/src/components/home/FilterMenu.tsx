@@ -63,8 +63,8 @@ export default function FilterMenu({ genere, ageRating, categorys, languages, Vi
         menuItems={languages?.map((m) => {
           return {
             id: m._id,
-            itemName: m.name,
-            path: `/language/${m.name}`,
+            itemName: m.languageName,
+            path: `/language/${m.languageName}`,
           };
         })}
       />

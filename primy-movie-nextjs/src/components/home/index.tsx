@@ -2,90 +2,20 @@ import React, { Suspense } from "react";
 import Providers from "./providers";
 import FilterMenu from "./FilterMenu";
 import Footer from "./footer";
-
-import { ErrorBoundary } from "next/dist/client/components/error-boundary";
-import HomeError from "@/app/(home)/error";
+import {
+  filterData,
+} from "@/types/other-types";
+import { globalFetcher2 } from "@/utils/fetcher";
+import { gql, ApolloQueryResult } from '@apollo/client';
+import Toast from "../ui/toast";
+import Loading from "@/app/(home)/loading";
 import Movies from "./movies";
 
 
-
-import toast, { Toaster } from 'react-hot-toast';
-
-
-
-import {
-  AgeRatingRespose,
-  categoryRespose,
-  filterData,
-  genereRespose,
-  languageRespose,
-  MovieProviderResponse,
-  videoQualityRespose,
-} from "@/types/other-types";
-import { globalFetcher, globalFetcher2 } from "@/utils/fetcher";
-import Loading from "@/app/(home)/loading";
-
-
-import { useQuery, gql, ApolloQueryResult } from '@apollo/client';
-import Toast from "../ui/toast";
-
-// async function getProviders() {
-
-
-//   const GET_PROVIDERS = gql`
-//     query Providers {
-//       providers {
-//       image
-//       providerName
-//       _id
-//     }
-//   }
-// `
-//   const res = await globalFetcher2(GET_PROVIDERS);
-
-//   // return res;
-// }
-
-// async function getGenere(): Promise<genereRespose> {
-//   const path = `${process.env.BASE_URL}/generes`;
-//   const res = await globalFetcher<genereRespose>(path);
-
-//   return res;
-// }
-
-// async function getAgeRatings(): Promise<AgeRatingRespose> {
-//   const path = `${process.env.BASE_URL}/age-rating`;
-//   const res = await globalFetcher<AgeRatingRespose>(path);
-
-//   return res;
-// }
-
-// async function getcategorys(): Promise<categoryRespose> {
-//   const path = `${process.env.BASE_URL}/category`;
-//   const res = await globalFetcher<categoryRespose>(path);
-
-//   return res;
-// }
-
-// async function getlanguages(): Promise<languageRespose> {
-//   const path = `${process.env.BASE_URL}/language`;
-//   const res = await globalFetcher<languageRespose>(path);
-
-//   return res;
-// }
-
-// async function getVideQuelity(): Promise<videoQualityRespose> {
-//   const path = `${process.env.BASE_URL}/video-quality`;
-//   const res = await globalFetcher<videoQualityRespose>(path);
-
-//   return res;
-// }
-
-
+import { ErrorBoundary } from "next/dist/client/components/error-boundary";
+import HomeError from "@/app/(home)/error";
 
 async function getFileringData(): Promise<ApolloQueryResult<filterData>> {
-
-
   const GET_PROVIDERS = gql`
     query filteringData {
     providers {
@@ -95,7 +25,7 @@ async function getFileringData(): Promise<ApolloQueryResult<filterData>> {
     }
     languages {
       _id
-      name
+      languageName
     }
     generes {
       name
@@ -117,17 +47,10 @@ async function getFileringData(): Promise<ApolloQueryResult<filterData>> {
     }
   }`
 
+  const res = await globalFetcher2<filterData>({ url: GET_PROVIDERS });
 
-
-  const res = await globalFetcher2<filterData>(GET_PROVIDERS);
-
-
-  // if (res.data) {
   return res
 
-  // }
-
-  // return null
 }
 
 export default async function HomeComponent({ page }: { page?: string }) {
@@ -147,13 +70,13 @@ export default async function HomeComponent({ page }: { page?: string }) {
         />
       </div>
 
-      {/* <div>
+      <div>
         <Suspense fallback={<Loading />}>
           <ErrorBoundary errorComponent={HomeError}>
             <Movies page={page} />
           </ErrorBoundary>
         </Suspense>
-      </div> */}
+      </div>
 
 
       {

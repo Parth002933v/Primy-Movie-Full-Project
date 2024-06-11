@@ -40,20 +40,16 @@ export async function globalFetcher<T>(url: string): Promise<T> {
 }
 
 
-export async function globalFetcher2<T>(url: DocumentNode): Promise<ApolloQueryResult<T>> {
+export async function globalFetcher2<T>({ url, variables }: { url: DocumentNode, variables?: {} }): Promise<ApolloQueryResult<T>> {
   try {
 
-    const res = await query({ query: url, errorPolicy: "all" })
+    const res = await query({ query: url, errorPolicy: "all", variables: variables })
     return res
   } catch (err: any) {
 
     if (err instanceof ApolloError) {
 
-
-      if (err.networkError) {
-
-        throw new Error(err.networkError?.message)
-      }
+      throw new Error(err.message)
     }
 
     throw new Error("")

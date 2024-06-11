@@ -10,7 +10,7 @@ export const languageResolver = {
 
 
       const allLanguages = await LanguageModel.find();
-      ///
+      
       if (allLanguages.length == 0)
         throw new CustomError({
           message: "there no language found in database",

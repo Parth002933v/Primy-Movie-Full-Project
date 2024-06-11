@@ -15,13 +15,6 @@ export const movieResolver = {
   Query: {
     movies: asyncResolverHandler(async (_: any, { page }: { page: { pageNo: number } }, context: PassportContext<any, any>) => {
 
-      // console.log(context.isUnauthenticated());
-
-      // if (context.isUnauthenticated()) {
-      //   throw new CustomError({ errorCode: errorCodeEnum.UNAUTHENTICATED, message: "you are not autherized to perform this action" })
-
-      // }
-
       const Movie = new ApiGraphqlFeatures({ query: MovieModel.find() })
 
       const filteredQuery = Movie.sort({}).paginate({ pageNumber: page.pageNo }).limitFields({})
@@ -49,7 +42,7 @@ export const movieResolver = {
     }
     ),
 
-    movieById: asyncResolverHandler(async (_: any, { slugUrl }: { slugUrl: string }) => {
+    movieBySlugUrl: asyncResolverHandler(async (_: any, { slugUrl }: { slugUrl: string }) => {
 
       const MovieObj = new ApiGraphqlFeatures({ query: MovieModel.findOne({ slugUrl: slugUrl }) })
 

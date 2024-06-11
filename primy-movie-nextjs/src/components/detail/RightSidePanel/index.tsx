@@ -3,12 +3,12 @@ import React from "react";
 import AlertDialog from "./alert-dialog";
 import ReletedSession from "./releted-session";
 import Image from "next/image";
-import { MoviedetailData } from "@/types/movie-types";
+import { IMovieDetail_gql } from "@/types/movie-types";
 
 export default function RightSidePanel({
   movieData,
 }: {
-  movieData: MoviedetailData;
+  movieData: IMovieDetail_gql;
 }) {
   return (
     <div className="w-[70%]  max-sm:w-full sm:px-[15px] px-3   ">
@@ -17,11 +17,11 @@ export default function RightSidePanel({
       <div className="min-h-[40px] flex flex-row justify-between  items-center  ">
         {/* // movie title */}
         <div>
-          <h1 className="font-semibold text-lg ">{movieData.name}</h1>
+          <h1 className="font-semibold text-lg ">{movieData.movieBySlugUrl.name}</h1>
           <span
             className={`flex text-muted-foreground gap-1 mt-2  text-sm items-center`}
           >
-            <Calendar size={15} className="" />({movieData.releaseYear})
+            <Calendar size={15} className="" />({movieData.movieBySlugUrl.releaseYear})
           </span>
         </div>
 
@@ -38,7 +38,7 @@ export default function RightSidePanel({
         <div className="text-[#6a7c8f] font-semibold  text-xl ">
           SUMMARY OF THE PLOT -
         </div>
-        <div className="text-muted-foreground">{movieData.content}</div>
+        <div className="text-muted-foreground">{movieData.movieBySlugUrl.content}</div>
       </div>
 
       {/* // alert for movie link broken */}
@@ -46,18 +46,18 @@ export default function RightSidePanel({
         <AlertDialog />
       </div>
 
-      {movieData.Seasons.length > 0 ? <ReletedSession /> : <></>}
+      {movieData.movieBySlugUrl.Seasons.length > 0 ? <ReletedSession /> : <></>}
 
-      <div className="flex  gap-3 w-fit overflow-auto no-scrollbar   justify-around relative  h-fit">
-        {movieData.screenShorts.map((m) => {
+      {/* screenshorts */}
+      <div className="flex  gap-3  overflow-auto no-scrollbar   justify-around relative ">
+        {movieData.movieBySlugUrl.screenShorts.map((m) => {
           return (
             <Image
               key={m}
-              className=" object-fill "
               src={m}
               width={500}
               height={281.25}
-              alt="caption ametica"
+              alt="sample images"
             />
           );
         })}

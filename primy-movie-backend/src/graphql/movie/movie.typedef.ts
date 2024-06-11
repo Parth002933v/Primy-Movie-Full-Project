@@ -76,7 +76,7 @@ export const movieTypeDef = `#graphql
 
   type Query {
     movies(page: PaginationInput): PaginatedMovies
-    movieById(slugUrl: ID!): Movie
+    movieBySlugUrl(slugUrl: ID!): Movie
   }
 
   input MovieInput {
