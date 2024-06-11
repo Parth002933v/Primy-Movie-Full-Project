@@ -5,6 +5,7 @@ import CustomError, { errorCodeEnum } from "../../utils/ErrorObject";
 export const providerResolver = {
   Query: {
     providers: asyncResolverHandler(async () => {
+     
       const movieProviders = await MovieProviderModel.find();
 
       if (movieProviders.length == 0) {

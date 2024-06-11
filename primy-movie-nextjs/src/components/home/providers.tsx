@@ -1,21 +1,20 @@
 import React from "react";
 import { ScrollArea, ScrollBar } from "../ui/scroll-area";
-import { MovieProviderResponse } from "@/types/other-types";
+import { MovieProvider_gql, MovieProviderResponse } from "@/types/other-types";
 import Image from "next/image";
 import Link from "next/link";
 
-export default function Providers({
-  providerData,
-}: {
-  providerData: MovieProviderResponse;
-}) {
+export default function Providers({ providerData }: { providerData: MovieProvider_gql[] | undefined }) {
   return (
     <div>
       <ScrollArea
         className={`max-lg:mx-2 lg:mx-20   whitespace-nowrap  rounded-md`}
       >
         <div className=" flex   w-max space-x-4  ">
-          {providerData.data.map((m) => {
+          {providerData?.map((m) => {
+
+            console.log(m);
+
             const imgUrl = `${process.env.BASE_URL2}${m.image}`;
 
             return (

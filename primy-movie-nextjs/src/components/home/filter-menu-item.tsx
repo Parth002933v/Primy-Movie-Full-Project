@@ -18,7 +18,7 @@ export default function FilterMenuItem({ menuItems, title }: MenuType) {
   const { theme } = useTheme();
   return (
     <div>
-      <NavigationMenu>
+      {menuItems ? <NavigationMenu>
         <NavigationMenuList>
           <NavigationMenuItem>
             <NavigationMenuTrigger className=" font-normal max-md:text-xs gap-0 py-3 px-3">
@@ -27,12 +27,11 @@ export default function FilterMenuItem({ menuItems, title }: MenuType) {
 
             <NavigationMenuContent className="">
               <div className=" min-w-72 grid grid-cols-2 text-nowrap max-md:min-w-48 left-72">
-                {menuItems.map((m) => (
+                {menuItems?.map((m) => (
                   <div
                     key={m.id}
-                    className={` ${
-                      theme == "light" ? "hover:bg-gray-300" : "hover:bg-accent"
-                    } py-3 px-6 rounded max-md:text-sm max-md:px-3`}
+                    className={` ${theme == "light" ? "hover:bg-gray-300" : "hover:bg-accent"
+                      } py-3 px-6 rounded max-md:text-sm max-md:px-3`}
                   >
                     <Link href={m.path}>
                       <p className="text-wrap">{m.itemName}</p>
@@ -43,7 +42,7 @@ export default function FilterMenuItem({ menuItems, title }: MenuType) {
             </NavigationMenuContent>
           </NavigationMenuItem>
         </NavigationMenuList>
-      </NavigationMenu>
+      </NavigationMenu> : <></>}
     </div>
   );
 }

@@ -7,8 +7,10 @@ import CustomError, { errorCodeEnum } from "../../utils/ErrorObject";
 export const languageResolver = {
   Query: {
     languages: asyncResolverHandler(async () => {
-      const allLanguages = await LanguageModel.find();
 
+
+      const allLanguages = await LanguageModel.find();
+      ///
       if (allLanguages.length == 0)
         throw new CustomError({
           message: "there no language found in database",
