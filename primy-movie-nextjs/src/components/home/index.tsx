@@ -16,7 +16,7 @@ import { ErrorBoundary } from "next/dist/client/components/error-boundary";
 import HomeError from "@/app/(home)/error";
 
 async function getFileringData(): Promise<ApolloQueryResult<filterData>> {
-  const GET_PROVIDERS = gql`
+  const GET_FILTERS = gql`
     query filteringData {
     providers {
       image
@@ -47,7 +47,7 @@ async function getFileringData(): Promise<ApolloQueryResult<filterData>> {
     }
   }`
 
-  const res = await globalFetcher2<filterData>({ url: GET_PROVIDERS });
+  const res = await globalFetcher2<filterData>({ url: GET_FILTERS });
 
   return res
 

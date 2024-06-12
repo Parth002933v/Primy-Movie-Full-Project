@@ -40,6 +40,8 @@ const duplicateKeyErrorHandler = (error: CustomError & MongoDBError) => {
 };
 
 const typeCastErrorHandler = (err: CustomError & MongoDBError) => {
+
+
   throw new GraphQLErrorRespose({
     message: `the Id of the ${err.value} is invalid`,
     errorCode: errorCodeEnum.VALIDATION_ERROR,
@@ -50,7 +52,7 @@ export const globaleGraphqlErrorHandler = (error: CustomError) => {
 
   if (process.env.NODE_ENV == undefined || process.env.NODE_ENV == "development") {
     console.log(process.env.NODE_ENV);
-    
+
     devError({ error: error });
   } else if (process.env.NODE_ENV == "production") {
     if (isMongoDBError(error) && error.code === 11000) {

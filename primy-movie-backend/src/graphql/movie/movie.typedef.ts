@@ -91,6 +91,7 @@ export const movieTypeDef = `#graphql
     languages: [ID!]
     isDualAudio: Boolean!
     videoQualitys: [ID!]
+    seasons: [ID]!
     isSeries: Boolean!
     category: ID!
     ageRating: ID!
@@ -109,7 +110,10 @@ export const movieTypeDef = `#graphql
     slugUrl: String! 
     message: String!
   }
+
+
   type Mutation{
-    addMovie(movie: MovieInput) : ceatedMovieOutput 
+    addMovie(movie: MovieInput) : ceatedMovieOutput
+    updateMovie(updateMovieParams: MovieInput, id: ID!): String
   }
 `;

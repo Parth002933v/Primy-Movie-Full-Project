@@ -19,6 +19,13 @@ import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
 
+import { useQuery as gqlQuery, gql } from "@apollo/client";
+import { IMovieDetail_gql } from "@/utils/movie-types";
+import { filterData } from "@/utils/other-types";
+
+
+
+
 export default function EditPage() {
   const { slugUrl } = useParams();
   // const [apiError, setApiError] = react.useState<string | null>(null);
@@ -87,7 +94,7 @@ export default function EditPage() {
 
     setLoader(true);
 
-    await updateMovieMutation({ newMovie: result, id: movieData!.data._id });
+    // await updateMovieMutation({ newMovie: result, id: movieData!.data._id });
 
     console.log(result);
   };
@@ -130,41 +137,44 @@ export default function EditPage() {
   });
 
   ///////////////// useQuerys/////////////////
-  const { data: generesQueryData } = useQuery({
-    queryKey: ["generes"],
-    queryFn: () => fetchGeneres(),
-    staleTime: Infinity,
-  });
 
-  const { data: LanguagesQueryData } = useQuery({
-    queryKey: ["Languages"],
-    queryFn: () => fetchLanguages(),
-    staleTime: Infinity,
-  });
+  const GET_FILTERS = gql`
+  query filteringData {
+  providers {
+    image
+    providerName
+    _id
+  }
+  languages {
+    _id
+    languageName
+  }
+  generes {
+    name
+    _id
+  }
+  categoris {
+    name
+    _id
+  }
+  ageRatings {
+    _id
+    rating
+    defination
+  }
+  videoQualitys {
+    Nickname
+    Quality
+    _id
+  }
+}`
 
-  const { data: videoQualityQueryData } = useQuery({
-    queryKey: ["videoQuality"],
-    queryFn: () => fetchVideoQuality(),
-    staleTime: Infinity,
-  });
+  const { data: filData } = gqlQuery<filterData>(GET_FILTERS);
 
-  const { data: categoryQueryData } = useQuery({
-    queryKey: ["category"],
-    queryFn: () => fetchCategory(),
-    staleTime: Infinity,
-  });
 
-  const { data: movieProviderQueryData } = useQuery({
-    queryKey: ["movideProvider"],
-    queryFn: () => fetchMovieProvider(),
-    staleTime: Infinity,
-  });
 
-  const { data: ageRatingQueryData } = useQuery({
-    queryKey: ["ageRating"],
-    queryFn: () => fetchAgeRating(),
-    staleTime: Infinity,
-  });
+
+
   const [genere, setGenere] = react.useState<SelectOption[]>([]);
   const [language, setlanguages] = react.useState<SelectOption[]>([]);
   const [videoQuality, setvideoQuality] = react.useState<SelectOption[]>([]);
@@ -178,84 +188,148 @@ export default function EditPage() {
     SelectOption | undefined
   >(undefined);
 
-  const {
-    data: movieData,
-    isLoading,
-    isError,
-    error: err,
-  } = useQuery({
-    queryKey: ["movieDetail"],
-    queryFn: () => getMovieBySlugUrl(slugUrl!),
-    staleTime: Infinity,
-    cacheTime: 0,
-    retry: false,
-  });
+  // const {
+  //   data: movieData,
+  // } = useQuery({
+  //   queryKey: ["movieDetail"],
+  //   queryFn: () => getMovieBySlugUrl(slugUrl!),
+  //   staleTime: Infinity,
+  //   cacheTime: 0,
+  //   retry: false,
+  // });
+
+
+
+  const GET_MovieDetail = gql`
+  query movieBySlugUrl($slugUrl: ID!) {
+    movieBySlugUrl(slugUrl: $slugUrl) {
+      _id
+      slugUrl
+      name
+      posterImage
+      bannerImage
+      screenShorts
+      content
+      downloadLink {
+        link
+        text
+      }
+      releaseYear
+      genre {
+        _id
+        name
+      }
+      languages {
+        languageName
+        _id
+      }
+      isDualAudio
+      videoQualitys {
+        Nickname
+        Quality
+        _id
+      }
+      Seasons {
+        _id
+        slugUrl
+        name
+        posterImage
+      }
+      isSeries
+      category {
+        _id
+        name
+      }
+      ageRating {
+        defination
+        rating
+        _id
+      }
+      movieProvider {
+        image
+        providerName
+        _id
+      }
+    }
+  }
+`
+
+
+  const { loading, error, data: moviesDetailData } = gqlQuery<IMovieDetail_gql>(GET_MovieDetail, { variables: { slugUrl: slugUrl } });
+
+
 
   react.useEffect(() => {
-    if (movieData) {
+    if (moviesDetailData?.movieBySlugUrl) {
       reset({
-        name: movieData.data.name,
-        content: movieData.data.content,
-        slugUrl: movieData.data.slugUrl,
-        posterImage: movieData.data.posterImage,
-        bannerImage: movieData.data.bannerImage,
-        screenShorts: movieData.data.screenShorts.map((m) => {
+        name: moviesDetailData!.movieBySlugUrl.name,
+        content: moviesDetailData!.movieBySlugUrl.content,
+        slugUrl: moviesDetailData!.movieBySlugUrl.slugUrl,
+        posterImage: moviesDetailData!.movieBySlugUrl.posterImage,
+        bannerImage: moviesDetailData!.movieBySlugUrl.bannerImage,
+        screenShorts: moviesDetailData!.movieBySlugUrl.screenShorts.map((m) => {
           return { link: m };
         }),
-        releaseYear: movieData.data.releaseYear,
+        releaseYear: moviesDetailData!.movieBySlugUrl.releaseYear,
 
-        downloadLink: movieData.data.downloadLink,
-        Seasons: movieData.data.Seasons,
-        isDualAudio: movieData.data.isDualAudio,
-        isSeries: movieData.data.isSeries,
+        downloadLink: moviesDetailData!.movieBySlugUrl.downloadLink,
+        Seasons: moviesDetailData!.movieBySlugUrl.Seasons,
+        isDualAudio: moviesDetailData?.movieBySlugUrl.isDualAudio,
+        isSeries: moviesDetailData?.movieBySlugUrl.isSeries,
       });
 
       setGenere(
-        movieData.data.genre.map((m) => {
+        moviesDetailData!.movieBySlugUrl.genre.map((m) => {
           return { __id: m._id, name: m.name };
         })
       );
 
       setlanguages(
-        movieData.data.languages.map((m) => {
+        moviesDetailData!.movieBySlugUrl.languages.map((m) => {
           return { __id: m._id, name: m.languageName };
         })
       );
 
       setcategory({
-        __id: movieData.data.category._id,
-        name: movieData.data.category.name,
+        __id: moviesDetailData!.movieBySlugUrl.category._id,
+        name: moviesDetailData!.movieBySlugUrl.category.name,
       });
 
       setvideoQuality(
-        movieData.data.videoQualitys.map((m) => {
+        moviesDetailData!.movieBySlugUrl.videoQualitys.map((m) => {
           return { __id: m._id, name: m.Quality };
         })
       );
 
       setageRating({
-        __id: movieData.data.ageRating._id,
-        name: movieData.data.ageRating.rating,
+        __id: moviesDetailData!.movieBySlugUrl.ageRating._id,
+        name: moviesDetailData!.movieBySlugUrl.ageRating.rating,
       });
 
       setMovieProvider({
-        __id: movieData.data.movieProvider._id,
-        name: movieData.data.movieProvider.providerName,
+        __id: moviesDetailData!.movieBySlugUrl.movieProvider._id,
+        name: moviesDetailData!.movieBySlugUrl.movieProvider.providerName,
       });
     }
-  }, [movieData, reset]);
+  }, [moviesDetailData, reset]);
 
-  if (isLoading) {
+
+
+  if (loading) {
     return <div>Loading...</div>;
   }
 
-  if (isError) {
-    return <div>{(err as AxiosError).message} </div>;
+  if (error) {
+    console.log(error);
+
+    return <div>{error.message} </div>;
   }
 
-  if (!movieData) {
-    return <div>No move found</div>;
-  }
+
+
+
+  ///===================================================================================================================
+
 
   return (
     <div>
@@ -372,9 +446,8 @@ export default function EditPage() {
                       <Input
                         key={f.id}
                         type="url"
-                        placeholder={`https://example.com/screenshot ${
-                          i + 1
-                        }.jpg`}
+                        placeholder={`https://example.com/screenshot ${i + 1
+                          }.jpg`}
                         {...register(`screenShorts.${i}.link` as const, {
                           required: {
                             value: true,
@@ -500,10 +573,10 @@ export default function EditPage() {
           {/* generes */}
           <div>
             <label htmlFor="genres">Genres</label>
-            {generesQueryData != null ? (
+            {filData!.generes != null ? (
               <MultiSelect
                 multiple
-                options={generesQueryData.map((e) => {
+                options={filData!.generes.map((e) => {
                   return { __id: e._id, name: e.name };
                 })}
                 value={genere}
@@ -536,10 +609,10 @@ export default function EditPage() {
           {/* languages */}
           <div>
             <label htmlFor="languages">Languages</label>
-            {LanguagesQueryData != null ? (
+            {filData!.languages != null ? (
               <MultiSelect
                 multiple
-                options={LanguagesQueryData.map((e) => {
+                options={filData!.languages.map((e) => {
                   return { __id: e._id, name: e.languageName };
                 })}
                 value={language}
@@ -599,9 +672,9 @@ export default function EditPage() {
           {/* category */}
           <div>
             <label htmlFor="category">category</label>
-            {categoryQueryData != null ? (
+            {filData!.categoris != null ? (
               <MultiSelect
-                options={categoryQueryData.map((e) => {
+                options={filData!.categoris.map((e) => {
                   return { __id: e._id, name: e.name };
                 })}
                 value={category}
@@ -617,10 +690,10 @@ export default function EditPage() {
           {/* videoQualitys */}
           <div>
             <label htmlFor="videoquality">Video Quality</label>
-            {videoQualityQueryData != null ? (
+            {filData!.videoQualitys != null ? (
               <MultiSelect
                 multiple
-                options={videoQualityQueryData.map((e) => {
+                options={filData!.videoQualitys.map((e) => {
                   return { __id: e._id, name: `${e.Quality} [${e.Nickname}]` };
                 })}
                 value={videoQuality}
@@ -636,9 +709,9 @@ export default function EditPage() {
           {/* Age Rating */}
           <div>
             <label htmlFor="ageRating">Age Rating</label>
-            {ageRatingQueryData != null ? (
+            {filData!.ageRatings != null ? (
               <MultiSelect
-                options={ageRatingQueryData.map((e) => {
+                options={filData!.ageRatings.map((e) => {
                   return { __id: e._id, name: `${e.rating} [${e.defination}]` };
                 })}
                 value={ageRating}
@@ -654,9 +727,9 @@ export default function EditPage() {
           {/* movieProvider */}
           <div>
             <label htmlFor="ageRating">Movie Provider</label>
-            {movieProviderQueryData != null ? (
+            {filData!.providers != null ? (
               <MultiSelect
-                options={movieProviderQueryData.map((e) => {
+                options={filData!.providers.map((e) => {
                   return { __id: e._id, name: e.providerName };
                 })}
                 value={movieProvider}

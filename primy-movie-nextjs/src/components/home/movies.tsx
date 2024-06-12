@@ -1,9 +1,8 @@
 import React from "react";
-import { IMoviesResponse_gql, MovieResponse } from "@/types/movie-types";
-import { globalFetcher2, MoveiFetcher } from "@/utils/fetcher";
+import { IMoviesResponse_gql } from "@/types/movie-types";
+import { globalFetcher2 } from "@/utils/fetcher";
 import MovieCard from "../movie-card";
-import { filterData } from "@/types/other-types";
-import { ApolloQueryResult, gql } from "@apollo/client";
+  import { ApolloQueryResult, gql } from "@apollo/client";
 import Toast from "../ui/toast";
 
 

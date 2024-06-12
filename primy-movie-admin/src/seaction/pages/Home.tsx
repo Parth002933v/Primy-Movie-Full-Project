@@ -2,10 +2,9 @@ import { Input } from "@/components/ui/input";
 import { Search } from "lucide-react";
 import MovieCard from "../component/MovieCard";
 
-import { useQuery } from "react-query";
-import { fetchMovie, MovieResponse } from "../api/movieAxios";
 
-import {  
+
+import {
   Pagination,
   PaginationContent,
   PaginationEllipsis,
@@ -15,7 +14,8 @@ import {
   PaginationPrevious,
 } from "@/components/ui/pagination";
 import { useSearchParams } from "react-router-dom";
-import { AxiosError } from "axios";
+import { gql, useQuery } from "@apollo/client";
+import { IMoviesResponse_gql } from "@/utils/movie-types";
 
 function SearchBar() {
   return (
@@ -35,36 +35,41 @@ function SearchBar() {
 export default function Home() {
   let [searchParams, setSearchParams] = useSearchParams();
 
-  const {
-    data: moviesData,
-    error,
-    isLoading,
-    isError,
-  } = useQuery<MovieResponse, Error>({
-    queryKey: ["movies", searchParams.get("page")],
-    queryFn: () => fetchMovie({ page: `${searchParams.get("page")}` }),
-    retry: false,
-    keepPreviousData: true,
-    staleTime: Infinity,
-  });
 
-  if (isLoading) {
+  const GET_Movies = gql`
+    query Movies($page: PaginationInput) {
+      movies(page: $page) {
+         length
+         TotalPages
+           movies {
+             slugUrl
+             _id
+             name
+             posterImage
+          }
+        }
+      }`
+
+
+
+  const { loading, error, data: moviesData } = useQuery<IMoviesResponse_gql>(GET_Movies, { variables: { page: { pageNo: 1 } } });
+
+
+  if (loading) {
     return <div>Loading...</div>;
   }
 
-  if (isError) {
-    return <div>{(error as AxiosError).message} </div>;
-  }
+  if (error) {
+    console.log(error);
 
-  if (moviesData && moviesData.data.length === 0) {
-    return <div>No movies available</div>;
+    return <div>{error.message} </div>;
   }
 
   return (
     <div className="">
       <SearchBar />
       <div className="mt-6 gap-2 flex flex-wrap">
-        {moviesData?.data.map((e) => (
+        {moviesData?.movies.movies.map((e) => (
           <MovieCard
             movieName={e.name}
             slugUrl={e.slugUrl}
@@ -83,7 +88,7 @@ export default function Home() {
               onClick={() => {
                 if (Number(searchParams.get("page")) > 1) {
                   setSearchParams({
-                    page: `${Number(searchParams.get("page")) - 1}`,
+                    page: `${Number(searchParams.get("page")) - 1} `,
                   });
                 }
               }}
@@ -92,13 +97,13 @@ export default function Home() {
 
           {/* Display up to 3 pagination items */}
           {Array.from(
-            { length: Math.min(moviesData?.TotalPages || 1, 3) },
+            { length: Math.min(moviesData?.movies.TotalPages || 1, 3) },
             (_, index) => {
               const currentPage = Number(searchParams.get("page")) || 1;
 
               const page = currentPage - 1 + index;
 
-              if (page < 1 || page > moviesData!.TotalPages) {
+              if (page < 1 || page > moviesData!.movies.TotalPages) {
                 return null;
               }
 
@@ -109,7 +114,7 @@ export default function Home() {
                     isActive={page === currentPage}
                     onClick={() => {
                       setSearchParams({
-                        page: `${page}`,
+                        page: `${page} `,
                       });
                     }}
                   >
@@ -120,7 +125,7 @@ export default function Home() {
             }
           )}
 
-          {moviesData!.TotalPages > 1 && (
+          {moviesData!.movies.TotalPages > 1 && (
             <PaginationItem>
               <PaginationEllipsis />
             </PaginationItem>
@@ -131,14 +136,14 @@ export default function Home() {
               href="#"
               onClick={() => {
                 setSearchParams({
-                  page: `${moviesData!.TotalPages}`,
+                  page: `${moviesData!.movies.TotalPages} `,
                 });
               }}
               isActive={
-                Number(searchParams.get("page")) === moviesData?.TotalPages
+                Number(searchParams.get("page")) === moviesData?.movies.TotalPages
               }
             >
-              {moviesData?.TotalPages}
+              {moviesData?.movies.TotalPages}
             </PaginationLink>
           </PaginationItem>
 
@@ -147,19 +152,19 @@ export default function Home() {
               onClick={() => {
                 if (
                   (Number(searchParams.get("page")) || 1) ===
-                  moviesData?.TotalPages
+                  moviesData?.movies.TotalPages
                 ) {
                   return;
                 }
 
                 if (Number(searchParams.get("page")) == 0) {
                   return setSearchParams({
-                    page: `${Number(searchParams.get("page")!) + 2}`,
+                    page: `${Number(searchParams.get("page")!) + 2} `,
                   });
                 }
 
                 return setSearchParams({
-                  page: `${Number(searchParams.get("page")!) + 1}`,
+                  page: `${Number(searchParams.get("page")!) + 1} `,
                 });
               }}
               className="cursor-pointer"

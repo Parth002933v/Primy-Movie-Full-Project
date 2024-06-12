@@ -6,11 +6,6 @@ import { ThemeProvider } from "@/components/theme-provider";
 import Hearder from "@/components/header";
 import GlobaleFooter from "@/components/footer";
 
-const fontSans = FontSans({
-  subsets: ["latin"],
-  variable: "--font-sans",
-});
-
 export const metadata: Metadata = {
   title: "Primy Movie",
 

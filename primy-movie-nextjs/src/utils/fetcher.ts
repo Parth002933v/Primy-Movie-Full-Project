@@ -1,43 +1,43 @@
 import { query } from "@/service/ApolloClient";
-import { ErrorResponse } from "@/types/error-type";
-import { MovieDetailRespose, MovieResponse } from "@/types/movie-types";
-
 import { ApolloError, ApolloQueryResult, DocumentNode } from "@apollo/client";
+// import { MovieDetailRespose, MovieResponse } from "@/types/movie-types";
 
-export async function MoveiFetcher(url: string): Promise<MovieResponse> {
-  const res = await fetch(url, { cache: "no-cache" });
+// import { ApolloError, ApolloQueryResult, DocumentNode } from "@apollo/client";
 
-  if (res.status != 200) {
-    const errorData: ErrorResponse = await res.json();
-    throw Error(errorData.message || "somthing went wrong");
-  }
-  return res.json();
-}
+// export async function MoveiFetcher(url: string): Promise<MovieResponse> {
+//   const res = await fetch(url, { cache: "no-cache" });
 
-export async function MovieDetailFetcher(
-  url: string
-): Promise<MovieDetailRespose> {
-  const res = await fetch(url, { cache: "no-cache" });
+//   if (res.status != 200) {
+//     const errorData: ErrorResponse = await res.json();
+//     throw Error(errorData.message || "somthing went wrong");
+//   }
+//   return res.json();
+// }
 
-  if (res.status != 200) {
-    const errorData: ErrorResponse = await res.json();
-    throw Error(errorData.message || "somthing went wrong");
-  }
+// export async function MovieDetailFetcher(
+//   url: string
+// ): Promise<MovieDetailRespose> {
+//   const res = await fetch(url, { cache: "no-cache" });
 
-  return res.json();
-}
+//   if (res.status != 200) {
+//     const errorData: ErrorResponse = await res.json();
+//     throw Error(errorData.message || "somthing went wrong");
+//   }
 
-export async function globalFetcher<T>(url: string): Promise<T> {
-  const res = await fetch(url);
+//   return res.json();
+// }
 
-  if (!res.ok) {
-    const errorData: ErrorResponse = await res.json();
+// export async function globalFetcher<T>(url: string): Promise<T> {
+//   const res = await fetch(url);
 
-    throw Error(errorData.message || " somthing went wrong");
-  }
+//   if (!res.ok) {
+//     const errorData: ErrorResponse = await res.json();
 
-  return res.json();
-}
+//     throw Error(errorData.message || " somthing went wrong");
+//   }
+
+//   return res.json();
+// }
 
 
 export async function globalFetcher2<T>({ url, variables }: { url: DocumentNode, variables?: {} }): Promise<ApolloQueryResult<T>> {

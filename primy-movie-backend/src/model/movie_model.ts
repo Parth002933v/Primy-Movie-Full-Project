@@ -24,7 +24,7 @@ export interface IMovie extends Document {
   languages: Ilanguage["_id"][];
   isDualAudio: boolean;
   videoQualitys: IVideoQuality["_id"][];
-  Seasons: IMovie["_id"][];
+  seasons: IMovie["_id"][];
   isSeries: boolean;
   category: ICategory["_id"];
   ageRating: IAgeRating["_id"];
@@ -79,7 +79,7 @@ const movieSchema = new Schema<IMovie>(
     ],
     isDualAudio: { type: Boolean, default: false },
     videoQualitys: [{ type: Schema.Types.ObjectId, ref: "videoQualitys" }],
-    Seasons: [{ type: Schema.Types.ObjectId, ref: "movies" }],
+    seasons: [{ type: Schema.Types.ObjectId, ref: "movies" }],
     isSeries: { type: Boolean, default: false },
     category: { type: Schema.Types.ObjectId, ref: "categorys", required: true },
     ageRating: {

@@ -93,10 +93,10 @@ export const movieResolver = {
     addMovie: asyncResolverHandler(async (_: any, { movie }: { movie: movieInterface }, content: PassportContext<any, any>) => {
 
 
-      if (content.isUnauthenticated()) {
+      // if (content.isUnauthenticated()) {
 
-        throw new CustomError({ errorCode: errorCodeEnum.UNAUTHENTICATED, message: "Your'e not authorised to perform this operation" })
-      }
+      //   throw new CustomError({ errorCode: errorCodeEnum.UNAUTHENTICATED, message: "You're not authorised to perform this operation" })
+      // }
 
       // Validate that referenced documents exist
       const [
@@ -106,6 +106,7 @@ export const movieResolver = {
         genresExist,
         languagesExist,
         videoQualitysExist,
+        seasonsExist
       ] = await Promise.all([
         CategoryModel.exists({ _id: movie.category }),
         AgeRatingModel.exists({ _id: movie.ageRating }),
@@ -113,7 +114,10 @@ export const movieResolver = {
         GenreModel.find({ _id: { $in: movie.genre } }).select("_id"),
         LanguageModel.find({ _id: { $in: movie.languages } }).select("_id"),
         VideoQualityModel.find({ _id: { $in: movie.videoQualitys } }).select("_id"),
+        MovieModel.find({ _id: { $in: movie.seasons } }).select("_id"),
       ]);
+
+      console.log(seasonsExist, "seasonsExist");
 
 
       if (!categoryExists) {
@@ -152,6 +156,14 @@ export const movieResolver = {
           errorCode: errorCodeEnum.BAD_USER_INPUT,
         });
       }
+      if (seasonsExist.length !== movie.seasons.length) {
+        console.log(seasonsExist.length !== movie.seasons.length);
+
+        throw new CustomError({
+          message: "Invalid season ID(s)",
+          errorCode: errorCodeEnum.BAD_USER_INPUT,
+        });
+      }
 
       const slugUrlValue = convertToSlugUrl({ str: movie.name })
 
@@ -169,7 +181,90 @@ export const movieResolver = {
         slugUrl: newMovie.slugUrl,
         message: "Movie Added Successfully!"
       }
+    }),
+
+    updateMovie: asyncResolverHandler(async (_: any, { updateMovieParams, id }: { updateMovieParams: movieInterface, id: string }, content: PassportContext<any, any>) => {
+
+      if (content.isUnauthenticated()) {
+
+        throw new CustomError({ errorCode: errorCodeEnum.UNAUTHENTICATED, message: "You're not authorised to perform this operation" })
+      }
+
+      // Validate that referenced documents exist
+      const [
+        categoryExists,
+        ageRatingExists,
+        movieProviderExists,
+        genresExist,
+        languagesExist,
+        videoQualitysExist,
+      ] = await Promise.all([
+        CategoryModel.exists({ _id: updateMovieParams.category }),
+        AgeRatingModel.exists({ _id: updateMovieParams.ageRating }),
+        MovieProviderModel.exists({ _id: updateMovieParams.movieProvider }),
+        GenreModel.find({ _id: { $in: updateMovieParams.genre } }).select("_id"),
+        LanguageModel.find({ _id: { $in: updateMovieParams.languages } }).select("_id"),
+        VideoQualityModel.find({ _id: { $in: updateMovieParams.videoQualitys } }).select("_id"),
+      ]);
+
+
+      if (!categoryExists) {
+        throw new CustomError({
+          message: "Invalid category ID",
+          errorCode: errorCodeEnum.BAD_USER_INPUT,
+        });
+      }
+      if (!ageRatingExists) {
+        throw new CustomError({
+          message: "Invalid age rating ID",
+          errorCode: errorCodeEnum.BAD_USER_INPUT,
+        });
+      }
+      if (!movieProviderExists) {
+        throw new CustomError({
+          message: "Invalid movie provider ID",
+          errorCode: errorCodeEnum.BAD_USER_INPUT,
+        });
+      }
+      if (genresExist.length !== updateMovieParams.genre.length) {
+        throw new CustomError({
+          message: "Invalid genre ID(s)",
+          errorCode: errorCodeEnum.BAD_USER_INPUT,
+        });
+      }
+      if (languagesExist.length !== updateMovieParams.languages.length) {
+        throw new CustomError({
+          message: "Invalid language ID(s)",
+          errorCode: errorCodeEnum.BAD_USER_INPUT,
+        });
+      }
+      if (videoQualitysExist.length !== updateMovieParams.videoQualitys.length) {
+        throw new CustomError({
+          message: "Invalid video quality ID(s)",
+          errorCode: errorCodeEnum.BAD_USER_INPUT,
+        });
+      }
+
+
+      const updatedMovie = await MovieModel.findByIdAndUpdate(id, { updateMovieParams })
+
+
+      if (!updatedMovie) {
+        throw new CustomError({
+          message: "somthing went wrong",
+          errorCode: errorCodeEnum.BAD_REQUEST,
+        });
+      }
+
+
+      return "Movie Updated Successfully!"
+
     })
+
+
+
+
+
   }
 };
 
@@ -193,9 +288,11 @@ interface movieInterface {
   languages: string[],
   isDualAudio: boolean,
   videoQualitys: string[],
+  seasons: string[]
   isSeries: boolean,
   category: string,
   ageRating: string,
   movieProvider: string,
   tags: string[]
 }
+

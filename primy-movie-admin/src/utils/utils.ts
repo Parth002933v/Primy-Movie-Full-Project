@@ -1,15 +1,20 @@
-export function stringToSlug(str: string) {
-  // Convert to lowercase
-  str = str.toLowerCase();
+export function stringToSlug({ str }: { str: string }): string {
+  // Remove special characters and keep alphanumeric, spaces, and hyphens
+  let slug = str.replace(/[^\w\s-]/g, '');
 
-  // Remove special characters
-  str = str.replace(/[^a-z0-9\s-]/g, "");
+  // Replace sequences of spaces with a single hyphen
+  slug = slug.replace(/\s+/g, '-');
 
-  // Replace spaces with hyphens
-  str = str.replace(/\s+/g, "-");
+  // Replace sequences of multiple hyphens with a single hyphen
+  slug = slug.replace(/-+/g, '-');
 
   // Remove leading and trailing hyphens
-  str = str.replace(/^-+|-+$/g, "");
+  slug = slug.replace(/^-+|-+$/g, '');
 
-  return str;
+  // Ensure the output is not empty
+  if (slug === '') {
+    slug = 'default-slug'; // Default value in case the input string was entirely invalid
+  }
+
+  return slug;
 }

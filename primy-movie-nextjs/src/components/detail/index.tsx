@@ -1,10 +1,10 @@
-import { globalFetcher2, MovieDetailFetcher } from "@/utils/fetcher";
+import { globalFetcher2 } from "@/utils/fetcher";
 import { Button } from "../ui/button";
 import LeftSidePanel from "./LeftSidePanel/left-sie-panel";
 import MainContectWrapper from "./main-contect-wrapper";
 import RightSidePanel from "./RightSidePanel";
 import TopbackGoundImage from "./top-component";
-import { IMovieDetail_gql, IMoviesResponse_gql, MovieDetailRespose } from "@/types/movie-types";
+import { IMovieDetail_gql } from "@/types/movie-types";
 import Link from "next/link";
 import Head from "next/head";
 import { ApolloQueryResult, gql } from "@apollo/client";
