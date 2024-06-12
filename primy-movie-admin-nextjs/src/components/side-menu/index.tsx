@@ -1,8 +1,6 @@
 import MyCard from "../custom-card";
 import logo from "../../../public/logo/dark_logo_new.png";
 import Image from "next/image";
-import Link from "next/link";
-import { usePathname } from "next/navigation";
 import { ADD_BATCH_LINK_PATH, ADD_MOVIE_PATH, GENERE_PATH } from "@/constant/routeContant";
 import {  NavLinkButton } from "./nav-link-button";
 

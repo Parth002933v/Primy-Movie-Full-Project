@@ -3,7 +3,7 @@ import { Input } from "../ui/input";
 
 export function SearchBar() {
     return (
-        <form className=" flex-1    max-md:max-w-64 w-full ">
+        <form className="flex-1 max-md:max-w-64 w-full ">
             <div className=" relative ">
                 <Input
                     type="search"

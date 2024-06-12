@@ -359,6 +359,7 @@ export default function AddMovie() {
                     </div>
                   );
                 })}
+                
                 <div className="text-red-700 text-sm">
                   {errors.screenShorts?.message}
                 </div>
@@ -375,7 +376,7 @@ export default function AddMovie() {
           </MyCard>
 
           {/* downloadLinks */}
-          <MyCard className="max-h-60 overflow-auto no-scrollbar border-muted">
+          <MyCard className="max-h-60 overflow-auto no-scrollbar border-muted"> 
             <div className="flex w-full">
               <div className="flex-auto ">
                 <Label htmlFor="screenShorts">downloadLinks</Label>

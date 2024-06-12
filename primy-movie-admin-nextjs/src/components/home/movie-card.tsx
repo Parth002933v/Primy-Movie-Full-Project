@@ -1,4 +1,5 @@
 import { cn } from "@/lib/utils";
+import Image from "next/image";
 import Link from "next/link";
 
 interface ButtonProps {
@@ -17,10 +18,12 @@ const MovieCard: React.FC<ButtonProps> = ({
     return (
         <div className={cn("group relative overflow-hidden rounded-lg bg-black", className)}>
             <Link href={`/edit/${slugUrl}`}>
-                <img
+                <Image
                     alt=""
+                    fill
                     src={imageUrl}
-                    className="absolute  inset-0 h-full w-full object-cover opacity-75 transition-opacity group-hover:opacity-50" />
+                    className="inset-0 h-full w-full object-cover opacity-75 transition-opacity group-hover:opacity-50"
+                />
 
                 <div className="p-5 mb-2">
                     <div className="">

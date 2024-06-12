@@ -6,7 +6,6 @@ import HomeError from "@/app/(Home)/error";
 export default function page({ params }: { params: { page: string } }) {
     return (
         <ErrorBoundary errorComponent={HomeError}>
-
             <HomePage page={params.page} />
         </ErrorBoundary>
 
