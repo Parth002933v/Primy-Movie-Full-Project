@@ -1,5 +1,5 @@
 # Use an official Node.js runtime as the base image
-FROM node:alpine as build
+FROM node:alpine
 
 # Set the working directory in the container
 WORKDIR /app
@@ -8,7 +8,7 @@ WORKDIR /app
 COPY package*.json ./
 
 # Install dependencies
-RUN npm install --production
+RUN npm install
 
 # Copy the rest of the application code to the working directory
 COPY . .
@@ -17,7 +17,7 @@ COPY . .
 # RUN npm run build
 
 # Expose the port Next.js runs on
-EXPOSE 8080
+EXPOSE 9001
 
 # Command to run the application
 CMD ["npm", "run", "dev"]

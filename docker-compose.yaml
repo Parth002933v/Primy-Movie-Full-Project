@@ -1,54 +1,54 @@
 services:
+
   backend:
     build:
       context: ./primy-movie-backend
       dockerfile: Dockerfile
+    image: backend-image
+    container_name: backend-container
     ports:
-      - 7777:7777
-    image: primy-movie-backend-image
-    container_name: primy-movie-backend-container
+      - 9002:9002
     env_file:
       - ./primy-movie-backend/.env
-    # volumes:
-    #   - ./primy-movie-backend:/app
+    volumes:
+      - ./primy-movie-backend/src:/app/src
     networks:
       - primy-movie-network
 
+  client:
+    build:
+      context: ./primy-movie-nextjs
+      dockerfile: Dockerfile
+    image: client-image
+    container_name: client-container
+    ports:
+      - 9001:9001
+    env_file:
+      - ./primy-movie-nextjs/.env
+    volumes:
+      - ./primy-movie-nextjs/src:/app/src
+    networks:
+      - primy-movie-network
+    depends_on:
+      - backend
+
   admin:
     build:
-      context: ./primy-movie-admin
+      context: ./primy-movie-admin-nextjs
       dockerfile: Dockerfile
-    image: primy-movie-admin-frontend-image
-    container_name: primy-movie-admin-frontend-container
+    image: admin-image
+    container_name: admin-container
+    ports:
+      - 9000:9000
     env_file:
-      - ./primy-movie-admin/.env
+      - ./primy-movie-admin-nextjs/.env
     volumes:
-      - ./primy-movie-admin:/app
-    network_mode: "host"
-
-  # client:
-  #   build:
-  #     context: ./primy-movie-nextjs
-  #     dockerfile: Dockerfile
-  #   image: primy-movie-client-image
-  #   container_name: primy-movie-client-container
-  #   env_file:
-  #     - ./primy-movie-nextjs/.env
-  #   volumes:
-  #     - ./primy-movie-nextjs:/app
-  #   network_mode: "host"
-  #   depends_on:
-  #     - backend
-
-  # tg-bot:
-  #   build:
-  #     context: ./primy-movie-tg-file-to-link-bot
-  #     dockerfile: Dockerfile
-  #   image: primy-movie-tg-bot-image
-  #   container_name: primy-movie-tg-bot-container
-  #   env_file:
-  #     - ./primy-movie-tg-file-to-link-bot/Adarsh/.env
-  #   network_mode: "host"
+      - ./primy-movie-admin-nextjs/src:/app/src
+    networks:
+      - primy-movie-network
+    depends_on:
+      - backend
 
 networks:
   primy-movie-network:
+    driver: bridge

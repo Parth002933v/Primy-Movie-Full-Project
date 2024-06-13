@@ -7,7 +7,7 @@ export default function page({ params }: { params: { page: string } }) {
 
   return (
     <ErrorBoundary errorComponent={HomeError}>
-      <HomeComponent page={ params.page} />
+      <HomeComponent page={params.page} />
     </ErrorBoundary>
   );
 }

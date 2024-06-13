@@ -22,6 +22,7 @@ RUN npm install
 
 # Build the Next.js application
 # RUN npm run build
+EXPOSE 7777
 
 CMD ["npm", "run", "prod"]
 

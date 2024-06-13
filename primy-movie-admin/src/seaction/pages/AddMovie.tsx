@@ -69,8 +69,8 @@ export default function AddMovie() {
       if (axios.isAxiosError(error)) {
         setApiError(
           error.response?.data?.message ||
-            error.message ||
-            "An unknown error occurred"
+          error.message ||
+          "An unknown error occurred"
         );
       } else {
         setApiError("An unknown error occurred");
@@ -335,9 +335,8 @@ export default function AddMovie() {
                       <Input
                         key={f.id}
                         type="url"
-                        placeholder={`https://example.com/screenshot ${
-                          i + 1
-                        }.jpg`}
+                        placeholder={`https://example.com/screenshot ${i + 1
+                          }.jpg`}
                         {...register(`screenShorts.${i}.link` as const, {
                           required: {
                             value: true,
@@ -359,7 +358,7 @@ export default function AddMovie() {
                     </div>
                   );
                 })}
-                
+
                 <div className="text-red-700 text-sm">
                   {errors.screenShorts?.message}
                 </div>
@@ -376,45 +375,43 @@ export default function AddMovie() {
           </MyCard>
 
           {/* downloadLinks */}
-          <MyCard className="max-h-60 overflow-auto no-scrollbar border-muted"> 
+          <MyCard className="max-h-60 overflow-auto no-scrollbar border-muted">
             <div className="flex w-full">
               <div className="flex-auto ">
                 <Label htmlFor="screenShorts">downloadLinks</Label>
 
                 {downloadLinkFields.map((f, i) => {
                   return (
-                    <div key={f.id} className=" gap-2 mb-2  ">
-                      <div key={f.id} className="flex">
-                        <Input
-                          placeholder={"1080p Full HD Bluray"}
-                          {...register(`downloadLink.${i}.text` as const, {
-                            required: {
-                              value: true,
-                              message: "link text is required",
-                            },
-                          })}
-                        />
-                        <Input
-                          type="url"
-                          placeholder={`https://example.com/download1080p`}
-                          {...register(`downloadLink.${i}.link` as const, {
-                            required: {
-                              value: true,
-                              message: "url is required",
-                            },
-                          })}
-                        />
-                        {i > 0 && (
-                          <Button
-                            type="button"
-                            variant={"destructive"}
-                            onClick={() => downloadLinkRemove(i)}
-                            className="h-8 w-8 items-center rounded-[4px] "
-                          >
-                            -
-                          </Button>
-                        )}
-                      </div>
+                    <div key={f.id} className="gap-2 mb-2 flex">~
+                      <Input
+                        placeholder={"1080p Full HD Bluray"}
+                        {...register(`downloadLink.${i}.text` as const, {
+                          required: {
+                            value: true,
+                            message: "link text is required",
+                          },
+                        })}
+                      />
+                      <Input
+                        type="url"
+                        placeholder={`https://example.com/download1080p`}
+                        {...register(`downloadLink.${i}.link` as const, {
+                          required: {
+                            value: true,
+                            message: "url is required",
+                          },
+                        })}
+                      />
+                      {i > 0 && (
+                        <Button
+                          type="button"
+                          variant={"destructive"}
+                          onClick={() => downloadLinkRemove(i)}
+                          className="h-8 w-8 items-center rounded-[4px] "
+                        >
+                          -
+                        </Button>
+                      )}
                     </div>
                   );
                 })}
@@ -481,7 +478,7 @@ export default function AddMovie() {
             )}
           </div>
 
-          {/* isSeries */}
+          {/* isSeries isDualAudio*/}
           <MyCard className=" border-muted  m-0 p-0  ">
             <Checkbox
               className="rounded-[3px] mx-4 mt-[5%] "

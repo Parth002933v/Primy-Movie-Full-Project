@@ -9,12 +9,8 @@ import {
 export const { getClient, query, PreloadQuery } = registerApolloClient(() => {
     return new ApolloClient({
         cache: new InMemoryCache(),
-
         link: new HttpLink({
-
-
-            uri: "http://localhost:7777/graphql",
-
+            uri: process.env.BASE_URL,
             fetchOptions: { cache: "no-store" },
         }),
     });

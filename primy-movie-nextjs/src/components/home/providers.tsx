@@ -14,6 +14,7 @@ export default function Providers({ providerData }: { providerData: MovieProvide
           {providerData?.map((m) => {
             const imgUrl = `${process.env.BASE_URL2}${m.image}`;
 
+
             return (
               <Link
                 href={`/provider/${m.providerName}`}
@@ -25,7 +26,7 @@ export default function Providers({ providerData }: { providerData: MovieProvide
                   className="object-contain absolute -z-10 rounded-md"
                   alt={m.providerName}
                   fill
-                  src={imgUrl}
+                  src={`${imgUrl}`}
                 />
               </Link>
             );
