@@ -742,6 +742,7 @@ export default function EditPage() {
             )}
           </div>
 
+          {/* tags */}
           <MyCard
             key={"tags"}
             className="max-h-60 overflow-auto no-scrollbar  border-muted"

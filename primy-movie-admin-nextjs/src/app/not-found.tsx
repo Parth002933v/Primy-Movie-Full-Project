@@ -2,7 +2,7 @@ import Link from "next/link";
 
 export default function NoPage() {
   return (
-    <div className="grid h-screen place-content-center   px-4">
+    <div className="grid text-center w-screen place-content-center ">
       <div className="text-center">
         <h1 className="text-9xl  font-semibold text-gray-200">404</h1>
 

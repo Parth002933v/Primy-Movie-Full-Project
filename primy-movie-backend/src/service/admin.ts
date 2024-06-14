@@ -1,4 +1,4 @@
-import { AdminModel } from "../model/admin_model";
+import { AdminModel, IAdmin } from "../model/admin_model";
 import CustomError, { errorCodeEnum } from "../utils/ErrorObject";
 
 export interface createAdminPayload {
@@ -9,6 +9,7 @@ export interface signInAdminPayload {
   input: { password: string };
 }
 class AdminService {
+
   public static async createAdmin(payload: createAdminPayload) {
     const { email, password } = payload.input;
 
@@ -22,18 +23,30 @@ class AdminService {
     return userCreated;
   }
 
-  public static async siginAdmin(payload: signInAdminPayload) {
-    const userExist = await AdminModel.findById(process.env.ADMIN_ID);
 
-    if (!userExist) {
+  private static async GenerateAccessAndRefreshToken(admin: IAdmin) {
+
+    const accessToken = admin.generateAccessToken();
+    // const refreshToken = admin.GenerateRefreshToken();
+
+    // admin.refreshToken = refreshToken;
+    await admin.save({ validateBeforeSave: false });
+
+    return { accessToken };
+
+  }
+
+
+  public static async siginAdmin({ password }: { password: string }) {
+    const admin = await AdminModel.findById(process.env.ADMIN_ID);
+
+    if (!admin) {
       throw new CustomError({
         errorCode: errorCodeEnum.NOT_FOUND,
         message: "No admin found. Please register first",
       });
     }
-    const isPasswordValid = await userExist.isPasswordCorrect(
-      payload.input.password
-    );
+    const isPasswordValid = await admin.isPasswordCorrect(password);
 
     if (isPasswordValid == false) {
       throw new CustomError({
@@ -41,6 +54,11 @@ class AdminService {
         message: "Invalid user credentials",
       });
     }
+
+
+    const { accessToken } = await AdminService.GenerateAccessAndRefreshToken(admin)
+
+    return {accessToken}
   }
 }
 

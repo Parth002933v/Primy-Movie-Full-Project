@@ -17,6 +17,7 @@ export async function CreateApolloGraphQLServer() {
     typeDefs: mergeDTypeDefs,
     resolvers: mergedResolvers,
     introspection: true,
+    
 
     plugins: [ApolloServerPluginLandingPageLocalDefault({ footer: false })],
   });

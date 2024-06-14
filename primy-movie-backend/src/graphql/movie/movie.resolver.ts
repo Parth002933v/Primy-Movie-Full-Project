@@ -1,19 +1,29 @@
 import { asyncResolverHandler } from "../../utils/asyncHandler";
-import MovieModel from "../../model/movie_model";
+
 import { ApiGraphqlFeatures } from "../../utils/ApiFeatures";
+
 import CustomError, { errorCodeEnum } from "../../utils/ErrorObject";
+
 import AgeRatingModel from "../../model/ageRating_model";
+import MovieModel from "../../model/movie_model";
 import CategoryModel from "../../model/category_model";
 import GenreModel from "../../model/genre_model";
 import LanguageModel from "../../model/languages_model";
 import MovieProviderModel from "../../model/movieProvider";
 import VideoQualityModel from "../../model/videoQuality_model";
-import { PassportContext } from "graphql-passport";
+
+// import { PassportContext } from "graphql-passport";
 import { convertToSlugUrl } from "../../utils/utils";
+
+//apollo
+import { ExpressContextFunctionArgument } from "@apollo/server/express4"
+
+
+
 
 export const movieResolver = {
   Query: {
-    movies: asyncResolverHandler(async (_: any, { page }: { page: { pageNo: number } }, context: PassportContext<any, any>) => {
+    movies: asyncResolverHandler(async (_: any, { page }: { page: { pageNo: number } }, context: ExpressContextFunctionArgument) => {
 
       const Movie = new ApiGraphqlFeatures({ query: MovieModel.find() })
 
@@ -90,13 +100,13 @@ export const movieResolver = {
 
 
   Mutation: {
-    addMovie: asyncResolverHandler(async (_: any, { movie }: { movie: movieInterface }, content: PassportContext<any, any>) => {
+    addMovie: asyncResolverHandler(async (_: any, { movie }: { movie: movieInterface }, context: ExpressContextFunctionArgument) => {
 
 
-      // if (content.isUnauthenticated()) {
+      if (context.req.isUnauthenticated()) {
 
-      //   throw new CustomError({ errorCode: errorCodeEnum.UNAUTHENTICATED, message: "You're not authorised to perform this operation" })
-      // }
+        throw new CustomError({ errorCode: errorCodeEnum.UNAUTHENTICATED, message: "You're not authorised to perform this operation" })
+      }
 
       // Validate that referenced documents exist
       const [
@@ -183,9 +193,9 @@ export const movieResolver = {
       }
     }),
 
-    updateMovie: asyncResolverHandler(async (_: any, { updateMovieParams, id }: { updateMovieParams: movieInterface, id: string }, content: PassportContext<any, any>) => {
+    updateMovie: asyncResolverHandler(async (_: any, { updateMovieParams, id }: { updateMovieParams: movieInterface, id: string }, content: ExpressContextFunctionArgument) => {
 
-      if (content.isUnauthenticated()) {
+      if (content.req.isUnauthenticated()) {
 
         throw new CustomError({ errorCode: errorCodeEnum.UNAUTHENTICATED, message: "You're not authorised to perform this operation" })
       }
