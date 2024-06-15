@@ -2,7 +2,7 @@
 
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
-import { globalFetcher2 } from './utils/fetcher';
+import { globalFetcher } from './utils/fetcher';
 import { gql } from '@apollo/client';
 import { cookies } from 'next/headers';
 

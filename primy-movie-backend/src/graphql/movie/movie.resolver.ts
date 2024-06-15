@@ -60,7 +60,7 @@ export const movieResolver = {
 
       if (!movie || movie.length == 0) {
         throw new CustomError({
-          message: `sorry we not able to file your movie`,
+          message: `sorry we not able to find your movie`,
           errorCode: errorCodeEnum.NOT_FOUND,
         });
       }
@@ -200,6 +200,7 @@ export const movieResolver = {
         throw new CustomError({ errorCode: errorCodeEnum.UNAUTHENTICATED, message: "You're not authorised to perform this operation" })
       }
 
+
       // Validate that referenced documents exist
       const [
         categoryExists,
@@ -216,6 +217,8 @@ export const movieResolver = {
         LanguageModel.find({ _id: { $in: updateMovieParams.languages } }).select("_id"),
         VideoQualityModel.find({ _id: { $in: updateMovieParams.videoQualitys } }).select("_id"),
       ]);
+
+
 
 
       if (!categoryExists) {
@@ -256,9 +259,17 @@ export const movieResolver = {
       }
 
 
-      const updatedMovie = await MovieModel.findByIdAndUpdate(id, { updateMovieParams })
+      const updatedMovie = await MovieModel.findByIdAndUpdate(id, updateMovieParams)
 
 
+      const movie = await MovieModel.findById(id);
+
+      if (!movie) {
+        throw new CustomError({
+          message: "somthing went wrong",
+          errorCode: errorCodeEnum.BAD_REQUEST,
+        });
+      }
       if (!updatedMovie) {
         throw new CustomError({
           message: "somthing went wrong",
@@ -267,7 +278,11 @@ export const movieResolver = {
       }
 
 
-      return "Movie Updated Successfully!"
+      return {
+        movieName: movie.name,
+        slugUrl: movie.slugUrl,
+        message: "Movie Updated Successfully!"
+      }
 
     })
 

@@ -1,6 +1,6 @@
 import { ApolloQueryResult, gql } from "@apollo/client";
 import { IMoviesResponse_gql } from "@/types/movie-types";
-import { globalFetcher2 } from "@/utils/fetcher";
+import { globalFetcher } from "@/utils/fetcher";
 import MovieCard from "./movie-card";
 import { SearchBar } from "./search-bar";
 import { Button } from "../ui/button";
@@ -24,7 +24,7 @@ async function getMovieData({ page }: { page?: string }): Promise<ApolloQueryRes
 
     const pageNoToInt = Number(page)
 
-    const res = await globalFetcher2<IMoviesResponse_gql>({ url: GET_Movies, variables: { page: { pageNo: pageNoToInt } } });
+    const res = await globalFetcher<IMoviesResponse_gql>({ url: GET_Movies, variables: { page: { pageNo: pageNoToInt } } });
 
     return res
 

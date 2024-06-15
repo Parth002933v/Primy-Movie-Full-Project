@@ -3,8 +3,7 @@
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm, useFieldArray, Controller } from "react-hook-form"
 import { z } from "zod"
-import { ApolloError, ApolloQueryResult, gql, DocumentNode, FetchResult } from "@apollo/client";
-import { GraphQLError } from "graphql";
+import { ApolloQueryResult, gql, DocumentNode } from "@apollo/client";
 
 
 import { Button } from "@/components/ui/button"
@@ -18,8 +17,6 @@ import {
 
 import Select from 'react-select';
 
-
-
 import { Input } from "@/components/ui/input"
 import { Textarea } from "../ui/textarea"
 
@@ -28,10 +25,9 @@ import { Dispatch, SetStateAction, useEffect, useState } from "react"
 import { convertToSlugUrl } from "@/utils/utils"
 
 import MyCard from "../custom-card"
-import { filterData } from "@/types/other-types"
+import { filterDataTypes } from "@/types/other-types"
 import { selectStyles } from "./custom-style"
 import { Checkbox } from "../ui/checkbox"
-import { handleAuthenticationCheck, serverSubmitForm } from "./handleSubmit"
 
 import {
     AlertDialog,
@@ -44,42 +40,15 @@ import {
     AlertDialogTitle,
     AlertDialogTrigger,
 } from "@/components/ui/alert-dialog"
+import { formSchema } from "./form-schema";
+
+import { IMovieDetail_gql } from "@/types/movie-types";
+import { handleAuthenticationCheck, serverSubmitForm } from "@/utils/api-calls";
 
 
-const currentYear = new Date().getFullYear();
-const minYear = currentYear - 50;
-
-export const formSchema = z.object({
-    movieName: z.string().min(2, { message: "Movie Name should be min 2 character long" }),
-    content: z.string().min(10, { message: "Movie content should be atleast 10 charcter long" }),
-    slugUrl: z.string(),
-    posterImage: z.string().url({ message: "Please provide valid url" }),
-    bannerImage: z.string().url({ message: "Please provide valid url" }),
-    screenShorts: z.array(z.object({ link: z.string().url('Must be a valid URL').nonempty('URL is required') })).min(1, "Provide minimum one screenShort"),
-    downloadLink: z.array(z.object({ text: z.string().min(1), link: z.string().url("Must be a valid URL") })).min(1, "provide mimimum one download link"),
-    releaseYear: z.preprocess((val) => {
-        if (typeof val === 'string') { return Number(val) }
-        return val;
-    }, z.number().int().min(minYear, `Year must be no earlier than ${minYear}`).max(currentYear, `Year must be no later than ${currentYear}`)),
-    genere: z.array(z.object({ value: z.string(), label: z.string() })).min(1, "provide atleast one genere"),
-    language: z.array(z.object({ value: z.string(), label: z.string() })).min(1, "provide atleast one language"),
-
-    isSeries: z.boolean().optional().default(false),
-    isDualAudio: z.boolean().optional().default(false),
-
-    seasons: z.array(z.object({ id: z.string() })).optional().default([]),
-    category: z.object({ value: z.string(), label: z.string() }),
-    videoQuality: z.array(z.object({ label: z.string(), value: z.string() })),
-    movieProvider: z.object({ value: z.string(), label: z.string() }),
-    ageRating: z.object({ value: z.string(), label: z.string() }),
-    tag: z.preprocess((val: string | unknown) => {
-        if (typeof val === "string") { return String(val).split(",") }
-    }, z.array(z.string()))
 
 
-})
-
-export default function AddMoviePage({ filterData }: { filterData: ApolloQueryResult<filterData> }) {
+export default function AddMoviePage({ filterData, movieData }: { filterData: ApolloQueryResult<filterDataTypes>, movieData?: IMovieDetail_gql["movieBySlugUrl"] }) {
 
     const [MessageDialog, setMessageDialog] = useState({ isOpen: false, message: "" })
 
@@ -97,8 +66,7 @@ export default function AddMoviePage({ filterData }: { filterData: ApolloQueryRe
             genere: [],
             language: [],
             videoQuality: [],
-            tag: [],
-
+            tag: [""],
             isSeries: false,
             isDualAudio: false
         },
@@ -123,6 +91,21 @@ export default function AddMoviePage({ filterData }: { filterData: ApolloQueryRe
     }
 
 
+    async function onUpdate(values: z.infer<typeof formSchema>) {
+
+        const { errors, data } = await serverSubmitForm(values)
+
+        if (errors) {
+
+            return setMessageDialog({ isOpen: true, message: `Error : ${errors[0].message}` })
+        }
+        if (data) {
+            form.reset()
+            return setMessageDialog({ isOpen: true, message: `${data.addMovie.message}` })
+        }
+
+    }
+
     async function isAuthenticated() {
 
         const { data, errors } = await handleAuthenticationCheck()
@@ -136,6 +119,7 @@ export default function AddMoviePage({ filterData }: { filterData: ApolloQueryRe
 
     }
 
+    // movie name to slug 
     useEffect(() => {
         if (form.watch("movieName")) {
             const slugUrl = convertToSlugUrl({ str: String(form.watch("movieName")) });
@@ -148,11 +132,41 @@ export default function AddMoviePage({ filterData }: { filterData: ApolloQueryRe
 
     }, [form.watch("movieName")])
 
+
+
+    // for update page
+    useEffect(() => {
+        if (movieData) {
+            form.reset({
+                movieName: movieData.name,
+                content: movieData.content,
+                posterImage: movieData.posterImage,
+                bannerImage: movieData.bannerImage,
+                screenShorts: movieData.screenShorts.map((m) => { return { link: m } }),
+                downloadLink: movieData.downloadLink,
+                releaseYear: movieData.releaseYear,
+                genere: movieData.genre.map((m) => { return { label: m.name, value: m._id } }),
+                isDualAudio: movieData.isDualAudio,
+                isSeries: movieData.isSeries,
+                language: movieData.languages.map((m) => { return { label: m.languageName, value: m._id } }),
+                seasons: movieData.Seasons.map((m) => { return { id: m._id } }),
+                category: { label: movieData.category.name, value: movieData.category._id },
+                videoQuality: movieData.videoQualitys.map((m) => { return { label: `${m.Quality} [${m.Nickname}]`, value: m._id } }),
+                movieProvider: { label: movieData.movieProvider.providerName, value: movieData.movieProvider._id },
+                ageRating: { label: movieData.ageRating.rating, value: movieData.ageRating._id },
+                tag: movieData.tags
+
+            })
+        }
+
+
+    }, [movieData])
+
     return (
         <>
             <Button onClick={isAuthenticated}>Check is Authenticated</Button>
             <Form {...form} >
-                <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+                <form onSubmit={movieData ? form.handleSubmit(onUpdate) : form.handleSubmit(onSubmit)} className="space-y-8">
                     <div className=" w-full  grid grid-cols-2 gap-2">
 
                         {/* movie Name */}
@@ -644,7 +658,7 @@ export default function AddMoviePage({ filterData }: { filterData: ApolloQueryRe
                     </div>
 
 
-                    <Button type="submit">Submit Movie</Button>
+                    <Button type="submit">{movieData ? "Update Movie" : "Submit Movie"}</Button>
                 </form>
 
 

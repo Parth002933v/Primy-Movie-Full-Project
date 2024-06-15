@@ -4,7 +4,7 @@
 import { z } from "zod";
 import { adminFormSchema } from ".";
 import { gql } from "@apollo/client";
-import { globalFetcher2, globalMutater } from "@/utils/fetcher";
+import { globalFetcher, globalMutater } from "@/utils/fetcher";
 import { cookies } from "next/headers";
 
 import { revalidatePath } from "next/cache";
