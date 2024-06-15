@@ -31,7 +31,7 @@ import MyCard from "../custom-card"
 import { filterData } from "@/types/other-types"
 import { selectStyles } from "./custom-style"
 import { Checkbox } from "../ui/checkbox"
-import { serverSubmitForm } from "./handleSubmit"
+import { handleAuthenticationCheck, serverSubmitForm } from "./handleSubmit"
 
 import {
     AlertDialog,
@@ -113,18 +113,28 @@ export default function AddMoviePage({ filterData }: { filterData: ApolloQueryRe
         const { errors, data } = await serverSubmitForm(values)
 
         if (errors) {
+
             return setMessageDialog({ isOpen: true, message: `Error : ${errors[0].message}` })
         }
         if (data) {
-            return setMessageDialog({ isOpen: true, message: `${data}` })
-
+            form.reset()
+            return setMessageDialog({ isOpen: true, message: `${data.addMovie.message}` })
         }
-
-
-
-
     }
 
+
+    async function isAuthenticated() {
+
+        const { data, errors } = await handleAuthenticationCheck()
+        if (errors) {
+
+            return setMessageDialog({ isOpen: true, message: `Error : ${errors[0].message}` })
+        }
+        if (data) {
+            return setMessageDialog({ isOpen: true, message: `${data.getAdmin}` })
+        }
+
+    }
 
     useEffect(() => {
         if (form.watch("movieName")) {
@@ -140,6 +150,7 @@ export default function AddMoviePage({ filterData }: { filterData: ApolloQueryRe
 
     return (
         <>
+            <Button onClick={isAuthenticated}>Check is Authenticated</Button>
             <Form {...form} >
                 <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
                     <div className=" w-full  grid grid-cols-2 gap-2">

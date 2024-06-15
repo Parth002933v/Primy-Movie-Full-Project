@@ -6,6 +6,7 @@ input adminSignInInput{
 
 type Query {
     hy: String
+    getAdmin: String
   }
 
 input adminSignUpInput{

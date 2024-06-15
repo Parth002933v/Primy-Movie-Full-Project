@@ -2,6 +2,8 @@ import AdminService, { createAdminPayload } from "../../service/admin";
 import { asyncResolverHandler } from "../../utils/asyncHandler";
 
 import { ExpressContextFunctionArgument } from "@apollo/server/express4";
+import CustomError, { errorCodeEnum } from "../../utils/ErrorObject";
+import { AdminModel } from "../../model/admin_model";
 
 
 export const adminResolver = {
@@ -10,7 +12,26 @@ export const adminResolver = {
 
 
       return `${content.req.user}`
+    }),
+
+    getAdmin: asyncResolverHandler(async (parent: any, arg: any, content: ExpressContextFunctionArgument) => {
+
+      if (content.req.isUnauthenticated()) {
+        throw new CustomError({ errorCode: errorCodeEnum.UNAUTHENTICATED, message: "You're not authorised to perform this operation" })
+
+      }
+
+
+      const admin = await AdminModel.findById(content.req.user)
+
+      if (!admin) {
+        throw new CustomError({ errorCode: errorCodeEnum.UNAUTHENTICATED, message: "You're not authorised to perform this operation" })
+      }
+
+      return `${admin.email}`
+
     })
+
   },
 
   Mutation: {
@@ -22,7 +43,7 @@ export const adminResolver = {
 
         const options = {
           httpOnly: true,
-          secure: process.env.NODE_ENV === "production", // Set to true in production
+          secure: process.env.NODE_ENV === "production",
         };
 
 

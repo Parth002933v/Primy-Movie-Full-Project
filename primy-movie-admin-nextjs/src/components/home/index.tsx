@@ -3,6 +3,7 @@ import { IMoviesResponse_gql } from "@/types/movie-types";
 import { globalFetcher2 } from "@/utils/fetcher";
 import MovieCard from "./movie-card";
 import { SearchBar } from "./search-bar";
+import { Button } from "../ui/button";
 
 
 async function getMovieData({ page }: { page?: string }): Promise<ApolloQueryResult<IMoviesResponse_gql>> {
@@ -29,12 +30,15 @@ async function getMovieData({ page }: { page?: string }): Promise<ApolloQueryRes
 
 }
 
+
+
 export default async function HomePage({ page }: { page?: string }) {
 
     const movies = await getMovieData({ page: page })
 
     return (
         <div>
+
             <SearchBar />
             <div className="mt-6 gap-2 flex flex-wrap">
                 {movies.data.movies?.movies.map((e) => (
@@ -51,3 +55,7 @@ export default async function HomePage({ page }: { page?: string }) {
         </div>
     )
 }
+function handle() {
+    throw new Error("Function not implemented.");
+}
+

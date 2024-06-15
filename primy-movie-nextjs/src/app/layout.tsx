@@ -6,6 +6,8 @@ import { ThemeProvider } from "@/components/theme-provider";
 import Hearder from "@/components/header";
 import GlobaleFooter from "@/components/footer";
 
+import NextTopLoader from 'nextjs-toploader';
+
 export const metadata: Metadata = {
   title: "Primy Movie",
 
@@ -28,6 +30,7 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
+          <NextTopLoader color="" showSpinner={false}/>
           <Hearder />
           {children}
           <GlobaleFooter />

@@ -101,6 +101,9 @@ async function init() {
         const decodedToken = jwt.verify(token, `${process.env.ACCESS_TOKEN_SECRET}`) as { _id: string };
         req.user = decodedToken._id
 
+        console.log(req.user);
+
+
         return { req: req, res: res }
       } catch (error) {
         console.log(error);

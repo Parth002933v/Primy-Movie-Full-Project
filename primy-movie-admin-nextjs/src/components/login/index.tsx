@@ -17,21 +17,20 @@ export const adminFormSchema = z.object({
 
 export default function LoginConponent() {
 
-    //* 1. Define your form.
     const form = useForm<z.infer<typeof adminFormSchema>>({
-        
         resolver: zodResolver(adminFormSchema),
-        defaultValues: {
-
-            password: ""
-
-        },
+        defaultValues: { password: "" },
     })
 
 
     async function onSubmit(values: z.infer<typeof adminFormSchema>) {
-        
-        await HandleLogin(values)
+
+        const res = await HandleLogin(values)
+
+        if (res) {
+
+            form.setError("password", { message: res })
+        }
     }
 
 

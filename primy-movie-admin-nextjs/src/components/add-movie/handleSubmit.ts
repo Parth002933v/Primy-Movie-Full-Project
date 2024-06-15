@@ -26,7 +26,18 @@ interface actualPostData {
 
 }
 
-export async function serverSubmitForm(values: z.infer<typeof formSchema>): Promise<FetchResult<string>> {
+
+interface movieRespose {
+    addMovie: {
+
+        message: string
+        slugUrl: string
+        movieName: string
+    }
+}
+
+
+export async function serverSubmitForm(values: z.infer<typeof formSchema>): Promise<FetchResult<movieRespose>> {
 
     const POST_MOVIE = gql`
         mutation AddMovie($movie: MovieInput) {
@@ -57,7 +68,10 @@ export async function serverSubmitForm(values: z.infer<typeof formSchema>): Prom
 
     };
 
-    const res = await globalMutater<string>({ mutationQuery: POST_MOVIE, variables: { movie: movie } })
+
+    const res = await globalMutater<movieRespose>({ mutationQuery: POST_MOVIE, variables: { movie: movie } })
+
+    console.log(res);
 
     return res
 
@@ -66,3 +80,16 @@ export async function serverSubmitForm(values: z.infer<typeof formSchema>): Prom
 
 
 
+export async function handleAuthenticationCheck() {
+
+    const GET_ADMIN = gql`
+    query GetAdmin {
+    getAdmin
+}
+`
+
+    const res = await globalFetcher2<{ getAdmin: string }>({ url: GET_ADMIN })
+
+    return res
+
+}

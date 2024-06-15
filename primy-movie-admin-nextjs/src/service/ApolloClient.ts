@@ -1,29 +1,16 @@
 import { HttpLink, ApolloClient as client } from "@apollo/client";
 import {
-    registerApolloClient,
-    ApolloClient,
     InMemoryCache,
 } from "@apollo/experimental-nextjs-app-support";
 
-
-
-
-export const { query } = registerApolloClient(() => {
-    return new ApolloClient({
-        cache: new InMemoryCache(),
-        ssrMode: typeof window === 'undefined',
-        link: new HttpLink({
-            uri: process.env.BASE_URL,
-            fetchOptions: { cache: "no-store" },
-        }),
-    });
-});
-
-
+import { cookies } from "next/headers";
 
 export const createApolloClient = new client({
-    ssrMode: true, // Enables server-side rendering
+    ssrMode: true,
     link: new HttpLink({
+        headers: {
+            authorization: `Bearer ${(cookies().get("_auth")?.value) || "undefined"}`,
+        },
         uri: process.env.BASE_URL,
         fetchOptions: { cache: "no-store" },
     }),
