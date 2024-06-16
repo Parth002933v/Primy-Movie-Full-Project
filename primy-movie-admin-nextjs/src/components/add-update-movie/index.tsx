@@ -43,7 +43,10 @@ import {
 import { formSchema } from "./form-schema";
 
 import { IMovieDetail_gql } from "@/types/movie-types";
-import { handleAuthenticationCheck, serverSubmitForm } from "@/utils/api-calls";
+import { deleteMovie, handleAuthenticationCheck, serverSubmitForm, updateMovie } from "@/utils/api-calls";
+
+import { useRouter } from "next/navigation";
+import { revalidatePath } from "next/cache";
 
 
 
@@ -51,6 +54,7 @@ import { handleAuthenticationCheck, serverSubmitForm } from "@/utils/api-calls";
 export default function AddMoviePage({ filterData, movieData }: { filterData: ApolloQueryResult<filterDataTypes>, movieData?: IMovieDetail_gql["movieBySlugUrl"] }) {
 
     const [MessageDialog, setMessageDialog] = useState({ isOpen: false, message: "" })
+    const router = useRouter();
 
     //* 1. Define your form.
     const form = useForm<z.infer<typeof formSchema>>({
@@ -93,7 +97,7 @@ export default function AddMoviePage({ filterData, movieData }: { filterData: Ap
 
     async function onUpdate(values: z.infer<typeof formSchema>) {
 
-        const { errors, data } = await serverSubmitForm(values)
+        const { errors, data } = await updateMovie({ values: values, id: movieData!._id })
 
         if (errors) {
 
@@ -101,10 +105,24 @@ export default function AddMoviePage({ filterData, movieData }: { filterData: Ap
         }
         if (data) {
             form.reset()
-            return setMessageDialog({ isOpen: true, message: `${data.addMovie.message}` })
+            return setMessageDialog({ isOpen: true, message: `${data.updateMovie.message}` })
         }
 
     }
+
+
+    async function onDelete() {
+        const res = await deleteMovie({ id: movieData!._id })
+        if (res.errors) {
+            return setMessageDialog({ isOpen: true, message: `Error : ${res.errors[0].message}` })
+        }
+        if (res.data) {
+            router.replace('/')
+
+            return;
+        }
+    }
+
 
     async function isAuthenticated() {
 
@@ -164,7 +182,10 @@ export default function AddMoviePage({ filterData, movieData }: { filterData: Ap
 
     return (
         <>
-            <Button onClick={isAuthenticated}>Check is Authenticated</Button>
+            <div className="flex justify-between">
+                <Button onClick={isAuthenticated}>Check is Authenticated</Button>
+                {movieData ? <Button onClick={onDelete} className="bg-destructive">Delete Movie</Button> : <></>}
+            </div>
             <Form {...form} >
                 <form onSubmit={movieData ? form.handleSubmit(onUpdate) : form.handleSubmit(onSubmit)} className="space-y-8">
                     <div className=" w-full  grid grid-cols-2 gap-2">
@@ -702,3 +723,4 @@ function Dialoag({ messageDialog, setMessageDialog }: {
 
 
 }
+

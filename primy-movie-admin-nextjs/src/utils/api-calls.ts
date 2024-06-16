@@ -7,7 +7,7 @@ import { IMovieDetail_gql } from "@/types/movie-types";
 import { RequestCookie } from "next/dist/compiled/@edge-runtime/cookies";
 
 import { z } from "zod";
-import { formSchema } from "@/components/add-movie/form-schema";
+import { formSchema } from "@/components/add-update-movie/form-schema";
 
 export async function GetFilters() {
   const GET_FILTERS = gql`
@@ -131,7 +131,7 @@ interface actualPostData {
 }
 
 
-interface movieRespose {
+interface addMovieRespose {
   addMovie: {
     message: string
     slugUrl: string
@@ -140,7 +140,7 @@ interface movieRespose {
 }
 
 
-export async function serverSubmitForm(values: z.infer<typeof formSchema>): Promise<FetchResult<movieRespose>> {
+export async function serverSubmitForm(values: z.infer<typeof formSchema>): Promise<FetchResult<addMovieRespose>> {
 
   const POST_MOVIE = gql`
       mutation AddMovie($movie: MovieInput) {
@@ -172,7 +172,7 @@ export async function serverSubmitForm(values: z.infer<typeof formSchema>): Prom
   };
 
 
-  const res = await globalMutater<movieRespose>({ mutationQuery: POST_MOVIE, variables: { movie: movie } })
+  const res = await globalMutater<addMovieRespose>({ mutationQuery: POST_MOVIE, variables: { movie: movie } })
 
   return res
 
@@ -180,16 +180,24 @@ export async function serverSubmitForm(values: z.infer<typeof formSchema>): Prom
 }
 
 
-//*================================================== updateMovie =============================================== 
-export async function updateMovie({ values, id }: { values: z.infer<typeof formSchema>, id: string }): Promise<FetchResult<movieRespose>> {
+//*================================================== updateMovie ======================================================
 
-  const POST_MOVIE = gql`
-      mutation AddMovie($movie: MovieInput) {
-          addMovie(movie: $movie) {
-            message
-            slugUrl
-            movieName
-          }
+interface UpdateMovieRespose {
+  updateMovie: {
+    message: string
+    slugUrl: string
+    movieName: string
+  }
+}
+export async function updateMovie({ values, id }: { values: z.infer<typeof formSchema>, id: string }): Promise<FetchResult<UpdateMovieRespose>> {
+
+  const UPDATE_MOVIE = gql`
+    mutation Mutation($updateMovieId: ID!, $updateMovieParams: MovieInput) {
+      updateMovie(id: $updateMovieId, updateMovieParams: $updateMovieParams) {
+        movieName
+        message
+        slugUrl
+        }
       }
   `
 
@@ -212,15 +220,20 @@ export async function updateMovie({ values, id }: { values: z.infer<typeof formS
   };
 
 
-  const res = await globalMutater<movieRespose>({ mutationQuery: POST_MOVIE, variables: { updateMovieId: id, updateMovieParams: movie } })
-
-  return res
-
-
+  return await globalMutater<UpdateMovieRespose>({ mutationQuery: UPDATE_MOVIE, variables: { updateMovieId: id, updateMovieParams: movie } })
 }
 
+//*================================================= DeleteMovie =========================================================
 
+export async function deleteMovie({ id }: { id: string }): Promise<FetchResult<string>> {
 
+  const DELETE_MOVIE = gql`
+    mutation DeleteMovie($deleteMovieId: ID) {
+      deleteMovie(id: $deleteMovieId)
+    }
+  `
+  return await globalMutater<string>({ mutationQuery: DELETE_MOVIE, variables: { deleteMovieId: id } })
+}
 
 //*========================================= handleAuthenticationCheck ====================================================
 export async function handleAuthenticationCheck() {

@@ -17,6 +17,7 @@ import { convertToSlugUrl } from "../../utils/utils";
 
 //apollo
 import { ExpressContextFunctionArgument } from "@apollo/server/express4"
+import { ExperimentalSpecifierResolution } from "ts-node";
 
 
 
@@ -101,6 +102,8 @@ export const movieResolver = {
 
   Mutation: {
     addMovie: asyncResolverHandler(async (_: any, { movie }: { movie: movieInterface }, context: ExpressContextFunctionArgument) => {
+
+      console.log("add movie");
 
 
       if (context.req.isUnauthenticated()) {
@@ -193,12 +196,18 @@ export const movieResolver = {
       }
     }),
 
-    updateMovie: asyncResolverHandler(async (_: any, { updateMovieParams, id }: { updateMovieParams: movieInterface, id: string }, content: ExpressContextFunctionArgument) => {
+    updateMovie: asyncResolverHandler(async (_: any, { updateMovieParams, id }: { updateMovieParams: movieInterface, id: string }, context: ExpressContextFunctionArgument) => {
 
-      if (content.req.isUnauthenticated()) {
+
+      console.log("update movie");
+
+
+      if (context.req.isUnauthenticated()) {
 
         throw new CustomError({ errorCode: errorCodeEnum.UNAUTHENTICATED, message: "You're not authorised to perform this operation" })
       }
+
+
 
 
       // Validate that referenced documents exist
@@ -284,8 +293,19 @@ export const movieResolver = {
         message: "Movie Updated Successfully!"
       }
 
-    })
+    }),
 
+    deleteMovie: asyncResolverHandler(async (_: any, { id }: { id: string }, context: ExpressContextFunctionArgument) => {
+
+      if (context.req.isUnauthenticated()) {
+        throw new CustomError({ errorCode: errorCodeEnum.UNAUTHENTICATED, message: "You're not authorised to perform this operation" })
+      }
+
+      const deletdMovie = await MovieModel.findByIdAndDelete(id)
+
+
+      return `The Movie With name "${deletdMovie!.name}" is deleted`
+    })
 
 
 

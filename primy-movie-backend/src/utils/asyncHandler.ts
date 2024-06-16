@@ -16,7 +16,6 @@ export const asyncResolverHandler = (resolver: any) => async (parent: any, args:
   try {
     return await resolver(parent, args, context, info);
   } catch (err: any) {
-    console.log(err);
     
     globaleGraphqlErrorHandler(err);
   }

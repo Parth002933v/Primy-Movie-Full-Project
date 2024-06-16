@@ -115,5 +115,6 @@ export const movieTypeDef = `#graphql
   type Mutation{
     addMovie(movie: MovieInput) : ceatedMovieOutput
     updateMovie(updateMovieParams: MovieInput, id: ID!): ceatedMovieOutput
+    deleteMovie(id:ID) : String
   }
 `;

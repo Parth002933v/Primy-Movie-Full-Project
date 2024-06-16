@@ -6,10 +6,7 @@ import express, { Express, Request, Response } from "express";
 import cors from "cors";
 import cookieParser from "cookie-parser"
 
-import session from "express-session";
-import connectMongo from "connect-mongodb-session";
 import passport from "passport"
-import { buildContext } from "graphql-passport";
 import { passportConfiguration } from "./passport/passport.config"
 
 // mongoose
@@ -22,13 +19,6 @@ import { CreateApolloGraphQLServer } from "./graphql/index";
 
 
 import jwt from "jsonwebtoken";
-
-
-
-import CustomError, { errorCodeEnum } from "./utils/ErrorObject";
-import { ExtractJwt, Strategy as JwtStrategy, StrategyOptionsWithoutRequest } from "passport-jwt"
-import { AdminModel } from "./model/admin_model";
-
 
 // Create Express app
 const app: Express = express();
@@ -92,7 +82,9 @@ app.get("/", (req: Request, res: Response) => {
 });
 
 async function init() {
-  app.use("/graphql", expressMiddleware(await CreateApolloGraphQLServer(), {
+
+
+  const server = app.use("/graphql", expressMiddleware(await CreateApolloGraphQLServer(), {
     context: async ({ req, res }) => {
 
       try {
@@ -113,6 +105,11 @@ async function init() {
 
     }
   }))
+
+
+
+
+
 }
 init();
 

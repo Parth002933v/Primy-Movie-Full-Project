@@ -56,7 +56,6 @@ export const globaleGraphqlErrorHandler = (error: CustomError) => {
 
 
   if (process.env.NODE_ENV == undefined || process.env.NODE_ENV == "development") {
-    console.log(process.env.NODE_ENV);
 
     devError({ error: error });
   } else if (process.env.NODE_ENV == "production") {

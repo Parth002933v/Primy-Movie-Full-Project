@@ -8,11 +8,7 @@ import { AdminModel } from "../../model/admin_model";
 
 export const adminResolver = {
   Query: {
-    hy: asyncResolverHandler(async (parent: any, arg: any, content: ExpressContextFunctionArgument) => {
-
-
-      return `${content.req.user}`
-    }),
+    hello: () => 'world',
 
     getAdmin: asyncResolverHandler(async (parent: any, arg: any, content: ExpressContextFunctionArgument) => {
 

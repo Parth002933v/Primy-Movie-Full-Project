@@ -17,7 +17,7 @@ export async function CreateApolloGraphQLServer() {
     typeDefs: mergeDTypeDefs,
     resolvers: mergedResolvers,
     introspection: true,
-    
+
 
     plugins: [ApolloServerPluginLandingPageLocalDefault({ footer: false })],
   });
@@ -26,3 +26,22 @@ export async function CreateApolloGraphQLServer() {
 
   return apolloServerServer;
 }
+
+
+
+// */================================
+interface MyContext {
+  token?: String;
+}
+
+const apolloServerServer = new ApolloServer<MyContext>({
+  typeDefs: mergeDTypeDefs,
+  resolvers: mergedResolvers,
+  introspection: true,
+
+
+  plugins: [ApolloServerPluginLandingPageLocalDefault({ footer: false })],
+});
+
+
+

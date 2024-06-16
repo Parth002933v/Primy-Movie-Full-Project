@@ -5,8 +5,8 @@ input adminSignInInput{
 }
 
 type Query {
-    hy: String
-    getAdmin: String
+      hello: String
+      getAdmin: String
   }
 
 input adminSignUpInput{

@@ -1,6 +1,6 @@
 import { ErrorBoundary } from 'next/dist/client/components/error-boundary'
 
-import AddMoviePage from '@/components/add-movie'
+import AddMoviePage from '@/components/add-update-movie'
 
 import ErrorPage from "./error"
 
