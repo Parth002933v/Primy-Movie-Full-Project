@@ -9,9 +9,7 @@ export default function Toast({ error }: { error: GraphQLErrors }) {
         if (error) {
             error.map((m) => toast.error(m.message))
         }
-    }, [])
-
-
+    }, [error])
 
     return (
         <div className='max-md:hidden'>

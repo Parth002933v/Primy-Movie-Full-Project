@@ -1,5 +1,6 @@
 import { AdminModel, IAdmin } from "../model/admin_model";
 import CustomError, { errorCodeEnum } from "../utils/ErrorObject";
+import { getSSMParam } from "../utils/secrets";
 
 export interface createAdminPayload {
   input: { email: string; password: string };
@@ -26,7 +27,7 @@ class AdminService {
 
   private static async GenerateAccessAndRefreshToken(admin: IAdmin) {
 
-    const accessToken = admin.generateAccessToken();
+    const accessToken = await admin.generateAccessToken();
     // const refreshToken = admin.GenerateRefreshToken();
 
     // admin.refreshToken = refreshToken;
@@ -38,7 +39,7 @@ class AdminService {
 
 
   public static async siginAdmin({ password }: { password: string }) {
-    const admin = await AdminModel.findById(process.env.ADMIN_ID);
+    const admin = await AdminModel.findById(await getSSMParam({ name: "/primy-movie-backend/prod/admin-id" }));
 
     if (!admin) {
       throw new CustomError({
@@ -58,7 +59,7 @@ class AdminService {
 
     const { accessToken } = await AdminService.GenerateAccessAndRefreshToken(admin)
 
-    return {accessToken}
+    return { accessToken }
   }
 }
 

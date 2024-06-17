@@ -1,6 +1,6 @@
 import React from "react";
 import LeftPannalDetailInfo from "./left-pannal-detail-info";
-import { IMovieDetail_gql, MoviedetailData, MovieDetailRespose } from "@/types/movie-types";
+import { IMovieDetail_gql} from "@/types/movie-types";
 import Image from "next/image";
 
 export default function LeftSidePanel({

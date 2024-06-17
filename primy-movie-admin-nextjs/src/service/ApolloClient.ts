@@ -13,7 +13,7 @@ export const createApolloClient = (cookie?: RequestCookie) => new client({
             authorization: `Bearer ${cookie ? cookie.value : cookies().get("_auth")?.value || "undefined"}`
             // authorization: `Bearer ${(cookies().get("_auth")?.value) || "undefined"}`,
         },
-        uri: process.env.BASE_URL,
+        uri: `${process.env.BASE_URL}/graphql`,
         fetchOptions: { cache: "no-store" },
     }),
     cache: new InMemoryCache(),

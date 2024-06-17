@@ -5,6 +5,9 @@ import dotenv from "dotenv";
 import express, { Express, Request, Response } from "express";
 import cors from "cors";
 import cookieParser from "cookie-parser"
+import helmet from "helmet";
+
+import compression from "compression"
 
 import passport from "passport"
 import { passportConfiguration } from "./passport/passport.config"
@@ -18,6 +21,11 @@ import { expressMiddleware } from "@apollo/server/express4";
 import { CreateApolloGraphQLServer } from "./graphql/index";
 
 import jwt from "jsonwebtoken";
+
+
+import serverlessExpress, { getCurrentInvoke } from "@codegenie/serverless-express";
+import { getSSMParam } from "./utils/secrets";
+
 
 // Create Express app
 const app: Express = express();
@@ -53,22 +61,25 @@ dotenv.config({ path: ".env" });
 // Start the server
 const PORT = process.env.PORT || 4000;
 
-const server = app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
-  console.log(`http://localhost:${PORT}/`);
-});
+// const server = app.listen(PORT, () => {
+//   console.log(`Server is running on port ${PORT}`);
+//   console.log(`http://localhost:${PORT}/`);
+// });
 
-process.on("uncaughtException", (err: Error) => {
-  console.log(err.message);
-  console.log("unhandled rejection is occured! shutting down...");
+// process.on("uncaughtException", (err: Error) => {
+//   console.log(err.message);
+//   console.log("unhandled rejection is occured! shutting down...");
 
-  server.close();
-});
+//   server.close();
+// });
 
 //connectDB
 connectDB();
 
 //middlewares
+app.use(helmet());
+app.use(compression());
+
 app.use(express.json());
 app.use(cors())
 app.use(express.static("public"));
@@ -88,16 +99,21 @@ async function init() {
 
   app.use("/graphql", expressMiddleware(await CreateApolloGraphQLServer(), {
     context: async ({ req, res }) => {
+      const { event, context } = getCurrentInvoke();
+
       try {
         const token = req.headers.authorization?.split(' ')[1] || req.cookies?.accessToken || "";
 
-        const decodedToken = jwt.verify(token, `${process.env.ACCESS_TOKEN_SECRET}`) as { _id: string };
+        const decodedToken = jwt.verify(token, `${await getSSMParam({ name: "/primy-movie-backend/prod/access-token-secret" })}`) as { _id: string };
         req.user = decodedToken._id
+
 
         console.log(req.user);
         return {
           req: req,
           res: res,
+          lambdaEvent: event,
+          lambdaContext: context,
         }
       } catch (error) {
         console.log(error);
@@ -105,19 +121,24 @@ async function init() {
         return {
           req: req,
           res: res,
+          lambdaEvent: event,
+          lambdaContext: context,
         }
       }
-    }
+    },
   }))
 }
 init();
 
-// if unhandled exception in occcure the app will shutdown
-process.on("unhandledRejection", (err: Error) => {
-  console.log(err.message);
-  console.log("unhandled rejection is occured! shutting down...");
-  server.close(() => {
-    process.exit(1);
-  });
-});
+// // if unhandled exception in occcure the app will shutdown
+// process.on("unhandledRejection", (err: Error) => {
+//   console.log(err.message);
+//   console.log("unhandled rejection is occured! shutting down...");
+//   server.close(() => {
+//     process.exit(1);
+//   });
+// });
+
+exports.handler = serverlessExpress({ app });
+
 
