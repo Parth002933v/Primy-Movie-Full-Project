@@ -1,17 +1,46 @@
-service: apollo-lambda
+service: serverless-nodejs-api
+useDotenv: true
 provider:
   name: aws
-  runtime: nodejs16.x
-  region: ap-east-1
-  httpApi:
-    cors: true
+  runtime: nodejs20.x
+  environment:
+    MONGODB_DATABSE_NAME: ${env:MONGODB_DATABSE_NAME}
+    ACCESS_TOKEN_EXPIRY: ${env:ACCESS_TOKEN_EXPIRY}
+
+  
+  iam:
+    role:
+      name: serverless-primy-movie-backend-ssm-role-${env:STAGE, "prod"}
+      statements:
+        - Effect: 'Allow'
+          Resource: '*'
+          Action:
+            - "ssm:GetParameter"
+            - "ssm:GetParameters"
+            - "ssm:GetParametersByPath"
+            - "ssm:GetParameterHistory"
+            - "ssm:DescribeParameters"
 functions:
   graphql:
-    # Make sure your file path is correct!
-    # (e.g., if your file is in the root folder use server.graphqlHandler )
-    # The format is: <FILENAME>.<HANDLER>
-    handler: src/index.handler # highlight-line
+    handler: build/index.handler
     events:
       - httpApi:
           path: /graphql
-          method: POST
+          method: "*"
+      - httpApi:
+          path: /
+          method: "*"
+custom:
+  dotenv:
+    exclude:
+      - AWS_ACCESS_KEY_ID
+      - AWS_SECRET_ACCESS_KEY
+      - AWS_SESSION_TOKEN
+      - MONGODB_URL
+      - ACCESS_TOKEN_SECRET
+      - ADMIN_ID
+      
+
+plugins:
+  - serverless-offline
+  - serverless-dotenv-plugin

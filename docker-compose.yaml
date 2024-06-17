@@ -7,7 +7,7 @@ services:
     image: backend-image
     container_name: backend-container
     ports:
-      - 9002:9002
+      - 3000:3000
     env_file:
       - ./primy-movie-backend/.env
     volumes:

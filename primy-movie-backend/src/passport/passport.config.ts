@@ -2,13 +2,14 @@ import passport from "passport"
 import { AdminModel } from "../model/admin_model";
 import CustomError, { errorCodeEnum } from "../utils/ErrorObject";
 import { ExtractJwt, Strategy as JwtStrategy, StrategyOptionsWithoutRequest } from "passport-jwt"
+import { getSSMParam } from "../utils/secrets";
 
-export function passportConfiguration() {
+export async function passportConfiguration() {
 
 
     const options: StrategyOptionsWithoutRequest = {
         jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
-        secretOrKey: `${process.env.JWT_SECRET}`
+        secretOrKey: `${await getSSMParam({ name: "/primy-movie-backend/prod/access-token-secret" })}`
     }
 
 

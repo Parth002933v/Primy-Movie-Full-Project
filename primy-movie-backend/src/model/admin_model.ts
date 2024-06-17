@@ -3,13 +3,13 @@ import { Document, model, Schema } from "mongoose";
 import bcrypt from "bcrypt";
 
 import jwt from "jsonwebtoken";
+import { getSSMParam } from "../utils/secrets";
 
 interface IAdmin extends Document {
   email: string;
   password: string;
   isPasswordCorrect(password: string): Promise<boolean>;
-  generateAccessToken(): string;
-  GenerateRefreshToken(): string;
+  generateAccessToken(): Promise<string>;
 }
 
 const adminSchema = new Schema<IAdmin>(
@@ -39,29 +39,19 @@ adminSchema.methods.isPasswordCorrect = async function (
 };
 
 
-adminSchema.methods.generateAccessToken = function (this: IAdmin): string {
+adminSchema.methods.generateAccessToken = async function (this: IAdmin): Promise<string> {
   return jwt.sign(
     {
       _id: this._id,
       email: this.email,
     },
-    `${process.env.ACCESS_TOKEN_SECRET}`,
+    `${await getSSMParam({ name: "/primy-movie-backend/prod/access-token-secret" })}}`,
     {
       expiresIn: `${process.env.ACCESS_TOKEN_EXPIRY}`,
     }
   );
 };
-adminSchema.methods.GenerateRefreshToken = function (this: IAdmin): string {
-  return jwt.sign(
-    {
-      _id: this._id,
-    },
-    `${process.env.REFRESH_TOKEN_SECRET}`,
-    {
-      expiresIn: `${process.env.REFRESH_TOKEN_EXPIRY}`,
-    }
-  );
-};
+
 
 const AdminModel = model<IAdmin>("admin", adminSchema);
 
