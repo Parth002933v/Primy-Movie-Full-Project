@@ -1,9 +1,9 @@
 "use client"
 
 import { zodResolver } from "@hookform/resolvers/zod"
-import { useForm, useFieldArray, Controller } from "react-hook-form"
+import { useForm, useFieldArray } from "react-hook-form"
 import { z } from "zod"
-import { ApolloQueryResult, gql, DocumentNode } from "@apollo/client";
+import { ApolloQueryResult } from "@apollo/client";
 
 
 import { Button } from "@/components/ui/button"
@@ -46,7 +46,6 @@ import { IMovieDetail_gql } from "@/types/movie-types";
 import { deleteMovie, handleAuthenticationCheck, serverSubmitForm, updateMovie } from "@/utils/api-calls";
 
 import { useRouter } from "next/navigation";
-import { revalidatePath } from "next/cache";
 
 
 
@@ -137,10 +136,12 @@ export default function AddMoviePage({ filterData, movieData }: { filterData: Ap
 
     }
 
+
+    const formWatch = form.watch("movieName")
     // movie name to slug 
     useEffect(() => {
-        if (form.watch("movieName")) {
-            const slugUrl = convertToSlugUrl({ str: String(form.watch("movieName")) });
+        if (formWatch) {
+            const slugUrl = convertToSlugUrl({ str: String(formWatch) });
             form.setValue("slugUrl", slugUrl)
         }
         else {
@@ -148,7 +149,7 @@ export default function AddMoviePage({ filterData, movieData }: { filterData: Ap
         }
 
 
-    }, [form.watch("movieName")])
+    }, [formWatch])
 
 
 
@@ -178,7 +179,7 @@ export default function AddMoviePage({ filterData, movieData }: { filterData: Ap
         }
 
 
-    }, [movieData])
+    }, [])
 
     return (
         <>
