@@ -1,37 +1,19 @@
 services:
 
-  backend:
-    build:
-      context: ./primy-movie-backend
-      dockerfile: Dockerfile
-    image: backend-image
-    container_name: backend-container
-    ports:
-      - 3000:3000
-    env_file:
-      - ./primy-movie-backend/.env
-    volumes:
-      - ./primy-movie-backend/src:/app/src
-    networks:
-      - primy-movie-network
-
-  client:
-    build:
-      context: ./primy-movie-nextjs
-      dockerfile: Dockerfile
-    image: client-image
-    container_name: client-container
-    ports:
-      - 9001:9001
-    env_file:
-      - ./primy-movie-nextjs/.env
-    volumes:
-      - ./primy-movie-nextjs:/app
-      - /app/node_modules
-    networks:
-      - primy-movie-network
-    depends_on:
-      - backend
+  # backend:
+  #   build:
+  #     context: ./primy-movie-backend
+  #     dockerfile: Dockerfile
+  #   image: backend-image
+  #   container_name: backend-container
+  #   ports:
+  #     - 3000:3000
+  #   env_file:
+  #     - ./primy-movie-backend/.env
+  #   volumes:
+  #     - ./primy-movie-backend/src:/app/src
+  #   networks:
+  #     - primy-movie-network
 
   admin:
     build:
@@ -49,10 +31,26 @@ services:
       - /app/node_modules
     networks:
       - primy-movie-network
-    depends_on:
-      - backend
+
     stdin_open: true
     tty: true
+
+  client:
+    build:
+      context: ./primy-movie-nextjs
+      dockerfile: Dockerfile
+    image: client-image
+    container_name: client-container
+    ports:
+      - 9001:9001
+    env_file:
+      - ./primy-movie-nextjs/.env
+    volumes:
+      - ./primy-movie-nextjs:/app
+      - /app/node_modules
+    networks:
+      - primy-movie-network
+
 
 networks:
   primy-movie-network:

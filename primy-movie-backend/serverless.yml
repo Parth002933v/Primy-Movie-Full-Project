@@ -30,6 +30,10 @@ functions:
       - httpApi:
           path: /
           method: "*"
+      - httpApi:
+          path: /images/{proxy+}
+          method: "*"
+
 custom:
   dotenv:
     exclude:

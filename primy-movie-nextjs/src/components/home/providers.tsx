@@ -12,7 +12,7 @@ export default function Providers({ providerData }: { providerData: MovieProvide
       >
         <div className=" flex w-max space-x-4">
           {providerData?.map((m) => {
-            const imgUrl = `${process.env.BASE_URL2}${m.image}`;
+            const imgUrl = `${process.env.BASE_URL}${m.image}`;
 
 
             return (
