@@ -1,11 +1,18 @@
 import mongoose from "mongoose";
 import MovieModel from "./model/movie_model";
+import { getSSMParam } from "./utils/secrets";
+
 
 async function connectDB() {
-  console.log(`${process.env.MONGODB_URL}/${process.env.MONGODB_DATABSE_NAME}`);
+
+
+
+  const dbUrl = await getSSMParam({ name: "/primy-movie-backend/prod/databse-url" })
+
+  console.log(`${dbUrl}/${process.env.MONGODB_DATABSE_NAME}`);
 
   mongoose
-    .connect(`${process.env.MONGODB_URL}/${process.env.MONGODB_DATABSE_NAME}`)
+    .connect(`${dbUrl}/${process.env.MONGODB_DATABSE_NAME}`)
     .then(() => {
       console.log("MongoDB Connected!");
 

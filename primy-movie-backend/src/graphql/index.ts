@@ -9,6 +9,7 @@ import {
 } from "@apollo/server/plugin/landingPage/default";
 
 
+import depthLimit from 'graphql-depth-limit';
 
 
 export async function CreateApolloGraphQLServer() {
@@ -19,17 +20,14 @@ export async function CreateApolloGraphQLServer() {
   const apolloServerServer = new ApolloServer<MyContext>({
     typeDefs: mergeDTypeDefs,
     resolvers: mergedResolvers,
-    introspection: true,
-
-
-    plugins: [ApolloServerPluginLandingPageLocalDefault({ footer: false })],
+    introspection: false,
+    validationRules: [depthLimit(5)],
+    // plugins: [ApolloServerPluginLandingPageLocalDefault({ footer: false })],
   });
 
   apolloServerServer.startInBackgroundHandlingStartupErrorsByLoggingAndFailingAllRequests();
 
   return apolloServerServer;
 }
-
-
 
 

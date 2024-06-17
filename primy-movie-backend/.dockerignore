@@ -10,14 +10,14 @@ test
 *.spec.js
 
 # Ignore environment variables
-.env
+# .env
 
 # Ignore local development files
 .DS_Store
 *.swp
 
 # Ignore Dockerfile and .dockerignore file itself
-Dockerfile
+# Dockerfile
 .dockerignore
 
 # Ignore npm and yarn related files
