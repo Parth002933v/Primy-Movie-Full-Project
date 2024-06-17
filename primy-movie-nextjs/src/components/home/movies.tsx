@@ -1,35 +1,7 @@
 import React from "react";
-import { IMoviesResponse_gql } from "@/types/movie-types";
-import { globalFetcher2 } from "@/utils/fetcher";
 import MovieCard from "../movie-card";
-  import { ApolloQueryResult, gql } from "@apollo/client";
 import Toast from "../ui/toast";
-
-
-
-async function getMovieData({ page }: { page?: string }): Promise<ApolloQueryResult<IMoviesResponse_gql>> {
-
-  const GET_Movies = gql`
-   query Movies($page: PaginationInput) {
-      movies(page: $page) {
-        length
-        TotalPages
-        movies {
-          slugUrl
-          _id
-          name
-          posterImage
-    }
-  }
-}`
-
-  const pageNoToInt = Number(page)
-
-  const res = await globalFetcher2<IMoviesResponse_gql>({ url: GET_Movies, variables: { page: { pageNo: pageNoToInt } } });
-
-  return res
-
-}
+import { getMovieData } from "@/service/Api-calls";
 
 export default async function Movies({ page }: { page?: string }) {
 

@@ -1,16 +1,16 @@
 {
     "version": "2",
     "headers": {
-        "content-type": "application/json"
+      "content-type": "application/json"
     },
     "isBase64Encoded": false,
     "rawQueryString": "",
     "requestContext": {
-        "http": {
-            "method": "POST"
-        }
+      "http": {
+        "method": "POST"
+      }
     },
     "rawPath": "/",
     "routeKey": "/",
     "body": "{\"operationName\": null, \"variables\": null, \"query\": \"{ hello }\"}"
-}
+  }

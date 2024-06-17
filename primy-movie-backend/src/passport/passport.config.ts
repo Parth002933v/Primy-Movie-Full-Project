@@ -1,6 +1,5 @@
 import passport from "passport"
 import { AdminModel } from "../model/admin_model";
-import { GraphQLLocalStrategy, buildContext } from "graphql-passport";
 import CustomError, { errorCodeEnum } from "../utils/ErrorObject";
 import { ExtractJwt, Strategy as JwtStrategy, StrategyOptionsWithoutRequest } from "passport-jwt"
 

@@ -1,92 +1,25 @@
-import { globalFetcher2 } from "@/utils/fetcher";
 import { Button } from "../ui/button";
 import LeftSidePanel from "./LeftSidePanel/left-sie-panel";
 import MainContectWrapper from "./main-contect-wrapper";
 import RightSidePanel from "./RightSidePanel";
 import TopbackGoundImage from "./top-component";
-import { IMovieDetail_gql } from "@/types/movie-types";
 import Link from "next/link";
-import Head from "next/head";
-import { ApolloQueryResult, gql } from "@apollo/client";
-
-// async function getMovieDetail(slug?: string): Promise<MovieDetailRespose> {
-//   const path = `${process.env.BASE_URL}/movies/${slug}`;
-//   const res = await MovieDetailFetcher(path);
-
-//   return res;
-// }
-
-
-
-async function getMovieDetail({ detail }: { detail?: string }): Promise<ApolloQueryResult<IMovieDetail_gql>> {
-
-  const GET_MovieDetail = gql`
-    query movieBySlugUrl($slugUrl: ID!) {
-      movieBySlugUrl(slugUrl: $slugUrl) {
-        _id
-        slugUrl
-        name
-        posterImage
-        bannerImage
-        screenShorts
-        content
-        downloadLink {
-          link
-          text
-        }
-        releaseYear
-        genre {
-          _id
-          name
-        }
-        languages {
-          languageName
-          _id
-        }
-        isDualAudio
-        videoQualitys {
-          Nickname
-          Quality
-          _id
-        }
-        Seasons {
-          _id
-          slugUrl
-          name
-          posterImage
-        }
-        isSeries
-        category {
-          _id
-          name
-        }
-        ageRating {
-          defination
-          rating
-          _id
-        }
-        movieProvider {
-          image
-          providerName
-          _id
-        }
-      }
-    }
-`
-
-  const res = await globalFetcher2<IMovieDetail_gql>({ url: GET_MovieDetail, variables: { slugUrl: detail } });
-
-  return res
-
-}
+import { getMovieDetail } from "@/service/Api-calls";
+import NoPage from "@/app/not-found";
 
 export default async function MovieDetail({ detail }: { detail?: string }) {
 
   const movieDetail = await getMovieDetail({ detail: detail })
 
+
+  if (movieDetail.errors) {
+    return <NoPage />
+  }
+
+
+
   return (
     <>
-
       <div
         className={` min-h-screen  flex flex-col  overflow-hidden after:border `}
       >
@@ -122,14 +55,3 @@ export default async function MovieDetail({ detail }: { detail?: string }) {
     </>
   );
 }
-
-
-
-{/* <Head>
-        <title>{res.data.name}</title>
-        <meta property="og:title" content={res.data.name} />
-        <meta property="og:description" content={res.data.content} />
-        <meta property="og:image" content={res.data.posterImage} />
-        {/* <meta property="og:url" content={res.data.ur} /> */}
-// <meta property="og:type" content="website" />
-// </Head> */}

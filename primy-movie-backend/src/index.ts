@@ -17,7 +17,6 @@ import { expressMiddleware } from "@apollo/server/express4";
 
 import { CreateApolloGraphQLServer } from "./graphql/index";
 
-
 import jwt from "jsonwebtoken";
 
 // Create Express app
@@ -81,12 +80,14 @@ app.get("/", (req: Request, res: Response) => {
   res.end("server is running...");
 });
 
+
+
+
 async function init() {
 
 
-  const server = app.use("/graphql", expressMiddleware(await CreateApolloGraphQLServer(), {
+  app.use("/graphql", expressMiddleware(await CreateApolloGraphQLServer(), {
     context: async ({ req, res }) => {
-
       try {
         const token = req.headers.authorization?.split(' ')[1] || req.cookies?.accessToken || "";
 
@@ -94,22 +95,20 @@ async function init() {
         req.user = decodedToken._id
 
         console.log(req.user);
-
-
-        return { req: req, res: res }
+        return {
+          req: req,
+          res: res,
+        }
       } catch (error) {
         console.log(error);
 
-        return { req: req, res: res }
+        return {
+          req: req,
+          res: res,
+        }
       }
-
     }
   }))
-
-
-
-
-
 }
 init();
 
@@ -121,3 +120,4 @@ process.on("unhandledRejection", (err: Error) => {
     process.exit(1);
   });
 });
+

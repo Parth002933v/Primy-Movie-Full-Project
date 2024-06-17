@@ -1,10 +1,16 @@
 import MovieDetail from "@/components/detail";
-import React from "react";
+
+import { ErrorBoundary } from "next/dist/client/components/error-boundary";
+
+import error from "@/app/global-error";
+
 
 export default function MovieDetailPage({
   params,
 }: {
   params: { detail: string };
 }) {
-  return <MovieDetail detail={params.detail} />;
+  return (<ErrorBoundary errorComponent={error}>
+    <MovieDetail detail={params.detail} />;
+  </ErrorBoundary>)
 }

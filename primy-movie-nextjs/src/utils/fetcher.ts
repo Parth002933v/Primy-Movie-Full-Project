@@ -2,7 +2,7 @@ import { query } from "@/service/ApolloClient";
 import { ApolloError, ApolloQueryResult, DocumentNode } from "@apollo/client";
 
 
-export async function globalFetcher2<T>({ url, variables }: { url: DocumentNode, variables?: {} }): Promise<ApolloQueryResult<T>> {
+export async function globalFetcher<T>({ url, variables }: { url: DocumentNode, variables?: {} }): Promise<ApolloQueryResult<T>> {
   try {
 
     const res = await query({ query: url, errorPolicy: "all", variables: variables })
