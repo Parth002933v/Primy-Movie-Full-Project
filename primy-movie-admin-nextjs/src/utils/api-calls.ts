@@ -9,7 +9,7 @@ import { RequestCookie } from "next/dist/compiled/@edge-runtime/cookies";
 import { z } from "zod";
 import { formSchema } from "@/components/add-update-movie/form-schema";
 
-export async function GetFilters() {
+export async function GetFilters(cookie?: RequestCookie) {
   const GET_FILTERS = gql`
         query filteringData {
             providers {

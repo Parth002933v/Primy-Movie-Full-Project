@@ -10,7 +10,7 @@ export const createApolloClient = (cookie?: RequestCookie) => new client({
     ssrMode: true,
     link: new HttpLink({
         headers: {
-            authorization: `Bearer ${cookie ? cookie.value : cookies().get("_auth")?.value || "undefined"}`
+            authorization: `Bearer ${cookie != null ? cookie.value : cookies().get("_auth")?.value || "undefined"}`
             // authorization: `Bearer ${(cookies().get("_auth")?.value) || "undefined"}`,
         },
         uri: `${process.env.BASE_URL}/graphql`,

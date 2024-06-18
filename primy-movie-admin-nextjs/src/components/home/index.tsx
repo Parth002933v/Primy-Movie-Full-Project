@@ -3,10 +3,11 @@ import { IMoviesResponse_gql } from "@/types/movie-types";
 import { globalFetcher } from "@/utils/fetcher";
 import MovieCard from "./movie-card";
 import { SearchBar } from "./search-bar";
-import { Button } from "../ui/button";
+import { cookies } from "next/headers";
+import { RequestCookie } from "next/dist/compiled/@edge-runtime/cookies";
 
 
-async function getMovieData({ page }: { page?: string }): Promise<ApolloQueryResult<IMoviesResponse_gql>> {
+async function getMovieData({ page, cookie }: { page?: string, cookie?: RequestCookie }): Promise<ApolloQueryResult<IMoviesResponse_gql>> {
 
     const GET_Movies = gql`
      query Movies($page: PaginationInput) {
@@ -24,7 +25,7 @@ async function getMovieData({ page }: { page?: string }): Promise<ApolloQueryRes
 
     const pageNoToInt = Number(page)
 
-    const res = await globalFetcher<IMoviesResponse_gql>({ url: GET_Movies, variables: { page: { pageNo: pageNoToInt } } });
+    const res = await globalFetcher<IMoviesResponse_gql>({ url: GET_Movies, variables: { page: { pageNo: pageNoToInt } }, cookie: cookie });
 
     return res
 
@@ -34,7 +35,8 @@ async function getMovieData({ page }: { page?: string }): Promise<ApolloQueryRes
 
 export default async function HomePage({ page }: { page?: string }) {
 
-    const movies = await getMovieData({ page: page })
+    const cookie = cookies().get("_auth")
+    const movies = await getMovieData({ page: page, cookie: cookie })
 
     return (
         <div>
