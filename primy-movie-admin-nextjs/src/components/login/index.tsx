@@ -71,8 +71,8 @@ export default function LoginConponent() {
                                 <Button
                                     type="submit"
                                     className="w-full py-2.5 px-4 text-sm rounded text-white bg-blue-600 hover:bg-blue-700 focus:outline-none"
-                                    children="Log in"
-                                />
+
+                                >Log in</Button>
 
                             </div>
                         </div>

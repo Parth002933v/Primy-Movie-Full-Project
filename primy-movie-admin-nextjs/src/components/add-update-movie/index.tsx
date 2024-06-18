@@ -149,7 +149,7 @@ export default function AddMoviePage({ filterData, movieData }: { filterData: Ap
         }
 
 
-    }, [formWatch])
+    }, [formWatch, form])
 
 
 
@@ -179,7 +179,7 @@ export default function AddMoviePage({ filterData, movieData }: { filterData: Ap
         }
 
 
-    }, [])
+    }, [movieData, form])
 
     return (
         <>
@@ -206,7 +206,7 @@ export default function AddMoviePage({ filterData, movieData }: { filterData: Ap
                                             {...field}
                                         />
                                     </FormControl>
-                                    <FormMessage className="" />
+                                    <FormMessage />
                                 </div>
                             )}
                         />
@@ -225,7 +225,7 @@ export default function AddMoviePage({ filterData, movieData }: { filterData: Ap
                                             {...field}
                                         />
                                     </FormControl>
-                                    <FormMessage className="" />
+                                    <FormMessage />
                                 </div>
                             )}
                         />
@@ -392,7 +392,7 @@ export default function AddMoviePage({ filterData, movieData }: { filterData: Ap
 
                                 </div>
 
-                                <Button type="button" onClick={() => downloadLinkUseFieldArray.append({ link: "", text: "" })} className="mt-6 h-8 w-8 rounded-[4px]" children="+" />
+                                <Button type="button" onClick={() => downloadLinkUseFieldArray.append({ link: "", text: "" })} className="mt-6 h-8 w-8 rounded-[4px]" >+</Button >
 
                             </div>
                         </MyCard>
@@ -457,7 +457,7 @@ export default function AddMoviePage({ filterData, movieData }: { filterData: Ap
                                             <Checkbox className="rounded-[3px] mx-4 mt-[5%] " checked={field.value} onCheckedChange={field.onChange}
                                             />
                                         </FormControl>
-                                        <FormLabel children="isSeries" />
+                                        <FormLabel  >isSeries</FormLabel>
 
                                     </>)}
                             />
@@ -471,7 +471,7 @@ export default function AddMoviePage({ filterData, movieData }: { filterData: Ap
                                             <Checkbox className="rounded-[3px] mx-4 mt-[5%] " checked={field.value} onCheckedChange={field.onChange} />
                                         </FormControl>
 
-                                        <FormLabel children="isDualAudio" />
+                                        <FormLabel >isDualAudio</FormLabel>
 
                                     </>)}
                             />
