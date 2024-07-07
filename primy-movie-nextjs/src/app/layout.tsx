@@ -10,7 +10,6 @@ import NextTopLoader from 'nextjs-toploader';
 
 export const metadata: Metadata = {
   title: "Primy Movie",
-
   description:
     "Download 1080p UHD 60FPS, 4k 2160 HDR, 1080p x265 10Bit, 4k SDR Movies & TV Series, Google Drive Direct Download Link, 4k Gdrive Links, 1080p Gdrive Links, 4k Dual Audio Movies, 1080p Dual Audio Movies, Hindi Dubbed HQ Movies, Top IMDB Movies",
 };
@@ -30,7 +29,7 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          <NextTopLoader color="" showSpinner={false}/>
+          <NextTopLoader color="" showSpinner={false} />
           <Hearder />
           {children}
           <GlobaleFooter />

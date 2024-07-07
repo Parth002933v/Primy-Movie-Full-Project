@@ -1,6 +1,6 @@
 "use server"
 
-import { IMovieDetail_gql, IMoviesResponse_gql } from "@/types/movie-types";
+import { IMovieDetail_gql, IMovieMetadata_gql, IMoviesResponse_gql } from "@/types/movie-types";
 import { filterData } from "@/types/other-types";
 import { globalFetcher } from "@/utils/fetcher";
 
@@ -10,7 +10,7 @@ import { ApolloQueryResult, gql } from "@apollo/client";
 
 //* ================================== filtering data ====================================
 export async function getFileringData(): Promise<ApolloQueryResult<filterData>> {
-    const GET_FILTERS = gql`
+  const GET_FILTERS = gql`
       query filteringData {
       providers {
         image
@@ -41,9 +41,9 @@ export async function getFileringData(): Promise<ApolloQueryResult<filterData>> 
       }
     }`
 
-    const res = await globalFetcher<filterData>({ url: GET_FILTERS });
+  const res = await globalFetcher<filterData>({ url: GET_FILTERS });
 
-    return res
+  return res
 
 }
 
@@ -51,7 +51,7 @@ export async function getFileringData(): Promise<ApolloQueryResult<filterData>> 
 //*===================================== paginated movie =========================================
 export async function getMovieData({ page }: { page?: string }): Promise<ApolloQueryResult<IMoviesResponse_gql>> {
 
-    const GET_Movies = gql`
+  const GET_Movies = gql`
      query Movies($page: PaginationInput) {
         movies(page: $page) {
           length
@@ -65,11 +65,11 @@ export async function getMovieData({ page }: { page?: string }): Promise<ApolloQ
     }
   }`
 
-    const pageNoToInt = Number(page)
+  const pageNoToInt = Number(page)
 
-    const res = await globalFetcher<IMoviesResponse_gql>({ url: GET_Movies, variables: { page: { pageNo: pageNoToInt } } });
+  const res = await globalFetcher<IMoviesResponse_gql>({ url: GET_Movies, variables: { page: { pageNo: pageNoToInt } } });
 
-    return res
+  return res
 
 }
 
@@ -77,7 +77,7 @@ export async function getMovieData({ page }: { page?: string }): Promise<ApolloQ
 //*==================================== movie detail ============================================
 export async function getMovieDetail({ detail }: { detail?: string }): Promise<ApolloQueryResult<IMovieDetail_gql>> {
 
-    const GET_MovieDetail = gql`
+  const GET_MovieDetail = gql`
       query movieBySlugUrl($slugUrl: ID!) {
         movieBySlugUrl(slugUrl: $slugUrl) {
           _id
@@ -131,8 +131,27 @@ export async function getMovieDetail({ detail }: { detail?: string }): Promise<A
       }
   `
 
-    const res = await globalFetcher<IMovieDetail_gql>({ url: GET_MovieDetail, variables: { slugUrl: detail } });
+  const res = await globalFetcher<IMovieDetail_gql>({ url: GET_MovieDetail, variables: { slugUrl: detail } });
 
-    return res
+  return res
+
+}
+
+
+//*==================================== movie Metadata ============================================
+export async function getMovieMetadata({ detail }: { detail?: string }): Promise<ApolloQueryResult<IMovieMetadata_gql>> {
+
+  const GET_MovieDetail = gql`
+    query movieBySlugUrl($slugUrl: ID!) {
+      movieBySlugUrl(slugUrl: $slugUrl) {
+        name
+        posterImage
+        bannerImage
+        content
+      }
+    }`
+  const res = await globalFetcher<IMovieMetadata_gql>({ url: GET_MovieDetail, variables: { slugUrl: detail } });
+
+  return res
 
 }

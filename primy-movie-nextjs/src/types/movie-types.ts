@@ -208,6 +208,12 @@ export interface IMovieDetail_gql {
 
 }
 
+export interface IMovieMetadata_gql{
+  name: string,
+  content: string,
+  posterImage: string,
+  bannerImage: string,
+}
 
 
 

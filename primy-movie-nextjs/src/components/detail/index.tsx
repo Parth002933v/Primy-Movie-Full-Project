@@ -7,6 +7,10 @@ import Link from "next/link";
 import { getMovieDetail } from "@/service/Api-calls";
 import NoPage from "@/app/not-found";
 
+
+
+
+
 export default async function MovieDetail({ detail }: { detail?: string }) {
 
   const movieDetail = await getMovieDetail({ detail: detail })
@@ -16,11 +20,13 @@ export default async function MovieDetail({ detail }: { detail?: string }) {
     return <NoPage />
   }
 
-
-
   return (
     <>
+
+
+
       <div
+        key={"top"}
         className={` min-h-screen  flex flex-col  overflow-hidden after:border `}
       >
         {/* // first or top background image  */}
@@ -37,13 +43,12 @@ export default async function MovieDetail({ detail }: { detail?: string }) {
           </div>
 
           {/* download links */}
-          <div className=" before:border before:border-gray-500 before:flex  h-fit text-center py-4 space-y-3 items-center">
+          <div key={"links"} className=" before:border before:border-gray-500 before:flex  h-fit text-center py-4 space-y-3 items-center">
 
-
-            {movieDetail.data.movieBySlugUrl.downloadLink.map((m) => (
-              <div key={m._id}>
+            {movieDetail.data.movieBySlugUrl.downloadLink.map((m, i) => (
+              <div key={i}>
                 <p className="text-xl  font-sans font-semibold">{m.text}</p>
-                <Link target="_blank" href={m.link}>
+                <Link href={m.link}>
                   <Button className="my-2 w-60 h-10">Download Now</Button>
                 </Link>
               </div>

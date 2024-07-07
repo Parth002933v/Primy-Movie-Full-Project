@@ -1,0 +1,21 @@
+ {
+    "message": {
+        "chat": {
+            "first_name": "₱₳Ɽ₮Ⱨ",
+            "id": 2049263497,
+            "type": "private",
+            "username": "parth002933"
+        },
+        "date": 1718803092,
+        "from": {
+            "first_name": "₱₳Ɽ₮Ⱨ",
+            "id": 2049263497,
+            "is_bot": false,
+            "language_code": "en",
+            "username": "parth002933"
+        },
+        "message_id": 33,
+        "text": "hy"
+    },
+    "update_id": 172054315
+}
